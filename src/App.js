@@ -3,6 +3,7 @@ import EmailObject from './components/emailObject/EmailObject'
 import status from './status'
 import * as actions from './actions'
 import { connect } from 'react-redux'
+import {Link} from "react-router-dom"
 
 class App extends Component {
   constructor(props) {
@@ -72,7 +73,7 @@ class App extends Component {
   saveChanges = (e) => {
     e.preventDefault();
     const emails = [...this.props.emailObjects];
-    emails.map(email => {
+    emails.forEach(email => {
       if (email.id === this.state.id) {
         email.title = this.state.title
       }
@@ -110,6 +111,7 @@ class App extends Component {
             <input type="number" name="timer" value={this.state.timer} onChange={(e) => this.handleChange("timer", e)} />
             {this.state.showAdd && <button type="submit">Add EmailObject</button>}
             {!this.state.showAdd && <button type="text" onClick={this.saveChanges}>Save</button>}
+            <Link to="/story">Zu den Storys</Link>
           </form>
         </div>
         <div className="liste">{this.renderListe()}</div>
