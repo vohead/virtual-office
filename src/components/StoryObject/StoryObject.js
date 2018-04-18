@@ -13,20 +13,60 @@ class StoryObject extends Component {
       author: "",
       text: "",
       id: 1,
+      activeId: 1,
       start: 0,
       end: 0,
       Mails: [],
       dependecies: {},
-      showAdd: true
+      showAdd: true,
+      showMails: false,
+      showMailDetails: false,
+      mailDetails: {}
     }
   }
+
+  showMails = () => {
+    this.setState({
+      showMails: true
+    })
+  }
+
+  showMailDetails = (email) => {
+    this.setState({
+      showMailDetails: true,
+      mailDetails: { ...email }
+    })
+  }
+
 
   editStory = (story) => {
     this.setState({
       showAdd: false,
-      title: story.title
+      title: story.title,
+      text: story.text,
+      author: story.author,
+      activeId: story.id
     });
 
+  }
+
+  renderMailDetails = () => {
+    const {showMails, mailDetails} = this.state
+    if (showMails) {
+      return ([
+        <div className="liste">{this.renderMailListe()}</div>,
+        <div>
+          <ul>
+            <li>{mailDetails.title}</li>
+            <li>{mailDetails.text}</li>
+            <li>{mailDetails.author}</li>
+            <li>4</li>
+            <li>5</li>
+          </ul>
+        </div>
+      ]
+      )
+    }
   }
 
   renderStoryListe = () => {
@@ -37,7 +77,7 @@ class StoryObject extends Component {
 
   renderMailListe = () => {
     return this.props.emailObjects.map((email, key) => {
-      return <p key={key}>{email.title}</p>
+      return <p key={key} onClick={() => this.showMailDetails(email)}>{email.title}</p>
     });
   }
 
@@ -79,7 +119,7 @@ class StoryObject extends Component {
     const stories = [...this.props.storyObjects];
 
     stories.forEach(story => {
-      if (story.id === this.state.id) {
+      if (story.id === this.state.activeId) {
         story.title = this.state.title
       }
     })
@@ -103,21 +143,23 @@ class StoryObject extends Component {
   }
 
   render() {
-
+    const { title, text, author, showAdd, showMails, showMailDetails, mailDetails } = this.state
     return (
       <div className="container">
         <div className="content">
           <form onSubmit={this.handleSubmit}>
-            <input type="text" name="title" value={this.state.title} onChange={(e) => this.handleChange("title", e)} />
-            <textarea name="text" cols="60" rows="5" value={this.state.text} onChange={(e) => this.handleChange("text", e)} />
-            <input type="text" name="author" value={this.state.author} onChange={(e) => this.handleChange("author", e)} />
-            {this.state.showAdd && <button type="submit">Add Story</button>}
-            {!this.state.showAdd && <button type="text" onClick={this.saveChanges}>Save</button>}
+            <input type="text" name="title" value={title} onChange={(e) => this.handleChange("title", e)} />
+            <textarea name="text" cols="60" rows="5" value={text} onChange={(e) => this.handleChange("text", e)} />
+            <input type="text" name="author" value={author} onChange={(e) => this.handleChange("author", e)} />
+            {showAdd && <button type="submit">Add Story</button>}
+            {!showAdd && <button type="text" onClick={this.saveChanges}>Save</button>}
             <Link to="/">Zu den Mails</Link>
           </form>
         </div>
         <div className="liste">{this.renderStoryListe()}</div>
-        <div className="liste">{this.renderMailListe()}</div>
+        {this.renderMailDetails()}
+        {!showMails && <button type="button" onClick={this.showMails}>Show Mails</button>}
+
       </div>
     )
   }

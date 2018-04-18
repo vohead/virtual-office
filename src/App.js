@@ -28,7 +28,7 @@ class App extends Component {
     };
     this.props.AddEmailObject(emailObject);
     this.setState({
-      id: ++this.state.id
+      id: this.state.id+1
     })
   }
 
