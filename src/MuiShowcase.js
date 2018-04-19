@@ -54,7 +54,7 @@ function MuiShowcase(props) {
         }}
       >
         <div className={classes.toolbar} />
-        <List>{props.list}</List>
+        <List>{props.list} EXACTLY</List>
       </Drawer>
       <main className={classes.content}>
         <div className={classes.toolbar} />
