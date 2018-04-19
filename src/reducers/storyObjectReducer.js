@@ -5,10 +5,8 @@ export default (state = [], action) => {
 
   case ADDSTORYOBJECT:
     return [...state, action.payload]
-    break;
   case SETSTORYOBJECTS:
     return action.payload
-    break;
   default:
     return state
   }

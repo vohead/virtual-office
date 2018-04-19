@@ -115,6 +115,8 @@ class StoryObject extends Component {
 					author: e.target.value
 				});
 				break;
+			default:
+				break;
 		}
 	};
 
@@ -128,7 +130,7 @@ class StoryObject extends Component {
 		};
 		this.props.AddStoryObject(storyObject);
 		this.setState({
-			id: ++this.state.id
+			id: this.state.id + 1
 		});
 	};
 

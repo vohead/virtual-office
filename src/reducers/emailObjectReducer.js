@@ -1,15 +1,14 @@
-import {ADDEMAILOBJECT, SETEMAILOBJECTS} from '../actions'
+import { ADDEMAILOBJECT, SETEMAILOBJECTS } from '../actions';
 
 export default (state = [], action) => {
-  switch (action.type) {
+	switch (action.type) {
+		case ADDEMAILOBJECT:
+			return [ ...state, action.payload ];
 
-  case ADDEMAILOBJECT:
-    return [...state, action.payload]
-    break;
-  case SETEMAILOBJECTS:
-    return action.payload
-    break;
-  default:
-    return state
-  }
-}
+		case SETEMAILOBJECTS:
+			return action.payload;
+
+		default:
+			return state;
+	}
+};
