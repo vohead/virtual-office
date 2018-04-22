@@ -6,7 +6,7 @@ import AppBar from 'material-ui/AppBar';
 import Toolbar from 'material-ui/Toolbar';
 import List from 'material-ui/List';
 import Typography from 'material-ui/Typography';
-import Divider from 'material-ui/Divider';
+
 
 const drawerWidth = 240;
 

@@ -9,19 +9,20 @@ import 'normalize-css';
 import reducers from './reducers';
 import App from './App';
 import StoryPage from './StoryPage';
+import MailPage from './MailPage';
 import MuiShowcase from './MuiShowcase';
 
 const store = createStore(reducers);
 
 ReactDOM.render(
-	<Provider store={store}>
-		<Router>
-			<Switch>
-				<Route path="/story" component={StoryPage} />
-				<Route path="/mui" component={MuiShowcase} />
-				<Route path="/" component={App} />
-			</Switch>
-		</Router>
-	</Provider>,
+		<Provider store={store}>
+			<Router>
+				<Switch>
+					<Route path="/story" component={StoryPage} />
+					<Route path="/mui" component={MuiShowcase} />
+					<Route path="/mails" component={MailPage} />
+				</Switch>
+			</Router>
+		</Provider>,
 	document.getElementById('root')
 );

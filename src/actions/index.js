@@ -27,7 +27,7 @@ export const AddStoryObject = (story) => {
 
 export const SetStoryObjects = (stories) => {
   return {
-    type: ADDSTORYOBJECT,
+    type: SETSTORYOBJECTS,
     payload: stories
   }
 }
