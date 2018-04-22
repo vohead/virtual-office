@@ -42,7 +42,8 @@ class StoryObject extends Component {
 
 	editStory = (story) => {
 		this.setState({
-			showAdd: false,
+      showAdd: false,
+      showMailDetails: false,
 			title: story.title,
 			text: story.text,
 			author: story.author,
