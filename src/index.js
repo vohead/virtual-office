@@ -7,7 +7,7 @@ import 'typeface-roboto';
 import 'normalize-css';
 
 import reducers from './reducers';
-import App from './App';
+// import App from './App';
 import StoryPage from './StoryPage';
 import MailPage from './MailPage';
 import MuiShowcase from './MuiShowcase';

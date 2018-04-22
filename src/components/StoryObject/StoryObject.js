@@ -55,13 +55,16 @@ class StoryObject extends Component {
 	};
 
 	addToMails = (id, dependencies) => {
-		const stories = this.props.storyObjects;
+		const stories = [ ...this.props.storyObjects ];
 
 		stories.forEach((story) => {
 			if (story.id === this.state.activeId) {
 				story.Mails = [ ...this.state.Mails, { id, mail: this.state.activeMail, dependencies } ];
 				this.props.SetStoryObjects(stories);
 			}
+			this.setState({
+				Mails: [ ...story.Mails ]
+			});
 		});
 	};
 
@@ -171,12 +174,8 @@ class StoryObject extends Component {
 	};
 
 	renderStoryMails = () => {
-		return this.props.storyObjects.forEach((story) => {
-			if (story.id === this.state.activeId) {
-				return story.Mails.map((mail, key) => {
-					return <p key={key}>bla</p>;
-				});
-			}
+		return this.state.Mails.map((mail, key) => {
+			return <p key={key}>{mail.id}</p>;
 		});
 	};
 

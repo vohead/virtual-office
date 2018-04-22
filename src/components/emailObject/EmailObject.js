@@ -66,7 +66,7 @@ class EmailObject extends Component {
 	};
 
 	renderEmailObject = (email, e) => {
-		const { id, title, text, author, timer, status } = email;
+		const { id, title, text, author, timer } = email;
 		this.setState({ ...email, showAdd: false });
 		return [
 			<ul>
