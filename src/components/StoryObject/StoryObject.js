@@ -50,7 +50,7 @@ class StoryObject extends Component {
 			text: story.text,
 			author: story.author,
 			activeId: story.id,
-			Mails: story.Mails
+			Mails: [ ...story.Mails ]
 		});
 	};
 
@@ -133,13 +133,13 @@ class StoryObject extends Component {
 	};
 
 	addStoryObject = () => {
-		const { title, text, author, Mails } = this.state;
+		const { title, text, author } = this.state;
 		const storyObject = {
 			id: this.state.id,
 			title,
 			text,
 			author,
-			Mails
+			Mails: []
 		};
 		this.props.AddStoryObject(storyObject);
 		this.setState({
@@ -175,7 +175,7 @@ class StoryObject extends Component {
 
 	renderStoryMails = () => {
 		return this.state.Mails.map((mail, key) => {
-			return <p key={key}>{mail.id}</p>;
+			return <p key={key}>{mail.mail.title}</p>;
 		});
 	};
 
