@@ -14,7 +14,7 @@ class StoryObject extends Component {
 			author: '',
 			text: '',
 			id: 1,
-			activeId: 1,
+			activeId: 0,
 			start: 0,
 			end: 0,
 			Mails: [],
@@ -50,21 +50,20 @@ class StoryObject extends Component {
 			text: story.text,
 			author: story.author,
 			activeId: story.id,
-			Mails: [ ...story.Mails ]
+			Mails: [...story.Mails]
 		});
 	};
 
 	addToMails = (id, dependencies) => {
-		const stories = [ ...this.props.storyObjects ];
+		const stories = [...this.props.storyObjects];
 
 		stories.forEach((story) => {
 			if (story.id === this.state.activeId) {
-				story.Mails = [ ...this.state.Mails, { id, mail: this.state.activeMail, dependencies } ];
+				story.Mails = [...story.Mails, { id, mail: this.state.activeMail, dependencies }];
 				this.props.SetStoryObjects(stories);
+
 			}
-			this.setState({
-				Mails: [ ...story.Mails ]
-			});
+
 		});
 	};
 
@@ -78,7 +77,7 @@ class StoryObject extends Component {
 						<li>{mailDetails.text}</li>
 						<li>{mailDetails.author}</li>
 						<li>
-							<button onClick={() => this.addToMails(2, [ 1, 5 ])}>Add to Mails</button>
+							<button onClick={() => this.addToMails(2, [1, 5])}>Add to Mails</button>
 						</li>
 						<li>5</li>
 					</ul>
@@ -143,12 +142,13 @@ class StoryObject extends Component {
 		};
 		this.props.AddStoryObject(storyObject);
 		this.setState({
-			id: this.state.id + 1
+			id: this.state.id + 1,
+			activeId: this.state.id
 		});
 	};
 
 	saveChanges = () => {
-		const stories = [ ...this.props.storyObjects ];
+		const stories = [...this.props.storyObjects];
 
 		stories.forEach((story) => {
 			if (story.id === this.state.activeId) {
@@ -174,9 +174,18 @@ class StoryObject extends Component {
 	};
 
 	renderStoryMails = () => {
-		return this.state.Mails.map((mail, key) => {
-			return <p key={key}>{mail.mail.title}</p>;
-		});
+		const stories = [...this.props.storyObjects]
+
+		return stories.map((story) => {
+			if (story.Mails.length > 0 && story.id === this.state.activeId) {
+				return story.Mails.map((email, key) => {
+					console.log('storymails: ', story.Mails)
+					console.log('state Mails: ', this.state.Mails)
+					return <p key={key}>{email.mail.title}</p>
+				})
+			}
+		})
+
 	};
 
 	render() {
@@ -221,8 +230,8 @@ class StoryObject extends Component {
 							Show Mails
 						</button>
 					) : (
-						<div>Go add some mails</div>
-					)}
+							<div>Go add some mails</div>
+						)}
 					{this.renderStoryMails()}
 				</div>
 			</MuiShowcase>
