@@ -1,10 +1,9 @@
-.container{
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: flex-end;
+.link {
+  color: white;
+  text-decoration: none;
+  margin-right: 25px;
 }
 
-
-.liste{
-  width: 15%;
+.link:hover {
+  color: red;
 }

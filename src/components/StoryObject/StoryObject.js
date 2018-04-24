@@ -1,247 +1,352 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 import * as actions from '../../actions';
 import MuiShowcase from '../../MuiShowcase';
-import { ListItem, ListItemText, Divider } from 'material-ui';
+import {
+	List,
+	ListItem,
+	ListItemText,
+	Grid,
+	TextField,
+	Card,
+	CardActions,
+	CardContent,
+	Typography,
+	Button,
+	Drawer
+} from 'material-ui';
+import { withStyles } from 'material-ui/styles';
+
+const styles = (theme) => ({
+	textField: {
+		marginLeft: theme.spacing.unit,
+		marginRight: theme.spacing.unit,
+		width: '90%'
+	},
+	textArea: {
+		marginLeft: theme.spacing.unit,
+		marginRight: theme.spacing.unit,
+		width: '95%'
+	},
+	container: {
+		width: '70%'
+	},
+	card: {
+		width: '20%',
+		marginTop: '15px',
+		marginRight: '15px'
+	},
+	button: {
+		margin: theme.spacing.unit
+	},
+	editButton: {
+		marginTop: '15px',
+		background: '#72cb00',
+		'&:hover': {
+			background: '#a8ff37'
+		}
+	},
+	list: {
+		width: '100%'
+	},
+	paper: {
+		width: '35%'
+	}
+});
 
 class StoryObject extends Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
+			id: 1,
+			right: false,
+			text: '',
 			title: '',
 			author: '',
-			text: '',
-			id: 1,
-			activeId: 0,
-			start: 0,
-			end: 0,
 			Mails: [],
-			showAdd: true,
-			showMails: false,
-			showMailDetails: false,
-			mailDetails: {},
-			activeMail: {}
+			saveSuccess: false,
+			saveMessage: 'Save successful'
 		};
 	}
 
-	showMails = () => {
-		if (this.props.emailObjects.length > 0) {
-			this.setState({
-				showMails: true
-			});
-		}
-	};
-
-	showMailDetails = (email) => {
+	handleChange = (name, e) => {
 		this.setState({
-			showMailDetails: true,
-			mailDetails: { ...email },
-			activeMail: email
+			[name]: e.target.value
 		});
 	};
 
-	editStory = (story) => {
+	activateStory = (story) => {
+		this.props.SetActiveStory(story);
 		this.setState({
-			showAdd: false,
-			showMailDetails: false,
 			title: story.title,
-			text: story.text,
 			author: story.author,
-			activeId: story.id,
-			Mails: [...story.Mails]
+			text: story.text,
+			Mails: story.Mails,
+			saveSuccess: false
 		});
 	};
 
-	addToMails = (id, dependencies) => {
-		const stories = [...this.props.storyObjects];
-
-		stories.forEach((story) => {
-			if (story.id === this.state.activeId) {
-				story.Mails = [...story.Mails, { id, mail: this.state.activeMail, dependencies }];
-				this.props.SetStoryObjects(stories);
-
-			}
-
-		});
-	};
-
-	renderMailDetails = () => {
-		const { showMailDetails, mailDetails } = this.state;
-		if (showMailDetails) {
+	renderStoryList = () => {
+		return this.props.storyArray.map((story, key) => {
 			return (
-				<div>
-					<ul>
-						<li>{mailDetails.title}</li>
-						<li>{mailDetails.text}</li>
-						<li>{mailDetails.author}</li>
-						<li>
-							<button onClick={() => this.addToMails(2, [1, 5])}>Add to Mails</button>
-						</li>
-						<li>5</li>
-					</ul>
-				</div>
+				<ListItem key={key} button onClick={() => this.activateStory(story)}>
+					<ListItemText primary={story.title} />
+				</ListItem>
 			);
-		}
-	};
-
-	renderStoryListe = () => {
-		return this.props.storyObjects.map((story, key) => {
-			return [
-				<ListItem button key={key}>
-					<ListItemText primary={story.title} onClick={() => this.editStory(story)} />
-				</ListItem>,
-				<Divider key={key + 'divider'} />
-			];
 		});
 	};
 
-	renderMailListe = () => {
-		if (this.state.showMails) {
-			return this.props.emailObjects.map((email, key) => {
+	toggleMailDrawer = () => {
+		this.setState({
+			right: this.state.right ? false : true
+		});
+	};
+
+	addEmailToComponentState = (email) => {
+		this.setState({ Mails: [ ...this.state.Mails, email ] });
+	};
+
+	renderAvailableMails = () => {
+		return this.props.emailObjects.map((email, key) => {
+			return (
+				<ListItem button onClick={() => this.addEmailToComponentState(email)}>
+					<ListItemText primary={email.title} />
+				</ListItem>
+			);
+		});
+	};
+
+	renderStoryMails = () => {
+		const { classes, activeStory } = this.props;
+		const { Mails } = this.state;
+		if (Mails) {
+			return Mails.map((mail, key) => {
 				return (
-					<p key={key} onClick={() => this.showMailDetails(email)}>
-						{email.title}
-					</p>
+					<Card className={classes.card} key={key}>
+						<CardContent>
+							<Typography className={classes.title} color="textSecondary">
+								{mail.title}
+							</Typography>
+							<Typography component="p">
+								Author:<br />
+								{mail.author}
+							</Typography>
+						</CardContent>
+						<CardActions>
+							<Button size="small">Learn More</Button>
+						</CardActions>
+					</Card>
 				);
 			});
 		}
 	};
 
-	handleChange = (fieldName, e) => {
-		switch (fieldName) {
-			case 'text':
-				this.setState({
-					text: e.target.value
-				});
-				break;
-			case 'title':
-				this.setState({
-					title: e.target.value
-				});
-				break;
-			case 'author':
-				this.setState({
-					author: e.target.value
-				});
-				break;
-			default:
-				break;
-		}
+	renderActiveMailDetails = () => {
+		const activeMail = this.props.activeMail;
+		return <p>{activeMail.title}</p>;
 	};
 
-	addStoryObject = () => {
-		const { title, text, author } = this.state;
-		const storyObject = {
-			id: this.state.id,
+	addStory = () => {
+		const { id, title, text, author, Mails } = this.state;
+		const story = {
+			id,
 			title,
-			text,
 			author,
-			Mails: []
+			text,
+			Mails
 		};
-		this.props.AddStoryObject(storyObject);
+		this.props.AddStoryObject(story);
+		this.props.SetActiveStory({});
 		this.setState({
-			id: this.state.id + 1,
-			activeId: this.state.id
+			id: id + 1,
+			text: '',
+			title: '',
+			author: '',
+			Mails: [],
+			saveSuccess: true
 		});
 	};
 
-	saveChanges = () => {
-		const stories = [...this.props.storyObjects];
-
-		stories.forEach((story) => {
-			if (story.id === this.state.activeId) {
-				story.title = this.state.title;
-			}
-		});
-		// this.props.SetStoryObjects(stories);
+	clearComponentStateAndForm = () => {
 		this.setState({
 			title: '',
 			author: '',
 			text: '',
-			start: 0,
-			end: 0,
 			Mails: [],
-			dependecies: {},
-			showAdd: true
+			saveSuccess: false
+		});
+
+		this.props.SetActiveStory({});
+	};
+
+	findActiveStoryAndUpdateValues = (array, compareObject) => {
+		const { id, title, text, author, Mails } = this.state;
+		const newStoryObject = {
+			id: compareObject.id,
+			title,
+			author,
+			text,
+			Mails
+		};
+
+		return array.map((element) => {
+			if (element.id === compareObject.id) {
+				return { ...newStoryObject };
+			}
+			return element;
 		});
 	};
 
-	handleSubmit = (e) => {
-		e.preventDefault();
-		this.addStoryObject();
+	updateActiveStoryAndReplaceItInStoryArray = (activeStory) => {
+		const { storyArray } = this.props;
+		const newArray = this.findActiveStoryAndUpdateValues(storyArray, activeStory);
+		this.props.SetStoryObjects(newArray);
+		this.setState({
+			saveMessage: 'Changes applied',
+			saveSuccess: true
+		})
 	};
 
-	renderStoryMails = () => {
-		const stories = [...this.props.storyObjects]
+	evaluateActiveStoryObjectToRenderCorrectButton = () => {
+		const { classes, activeStory } = this.props;
+		console.log(activeStory);
+		if (activeStory.title) {
+			return (
+				<Button
+					onClick={() => this.updateActiveStoryAndReplaceItInStoryArray(activeStory)}
+					className={classes.editButton}
+				>
+					Save Changes
+				</Button>
+			);
+		}
+		return (
+			<Button color="secondary" onClick={this.addStory} className={classes.button}>
+				Save Story
+			</Button>
+		);
+	};
 
-		return stories.map((story) => {
-			if (story.Mails.length > 0 && story.id === this.state.activeId) {
-				return story.Mails.map((email, key) => {
-					console.log('storymails: ', story.Mails)
-					console.log('state Mails: ', this.state.Mails)
-					return <p key={key}>{email.mail.title}</p>
-				})
-			}
-		})
-
+	evaluateSaveSuccessFromState = () => {
+		const { classes } = this.props;
+		if (!this.state.saveSuccess) {
+			return (
+				<Grid container className={classes.container}>
+					<Grid item sm="12">
+						<TextField
+							required
+							id="required"
+							label="Title"
+							value={this.state.title}
+							onChange={(e) => this.handleChange('title', e)}
+							className={classes.textField}
+							margin="normal"
+						/>
+					</Grid>
+					<Grid item sm="12">
+						<TextField
+							required
+							id="required"
+							label="Author"
+							value={this.state.author}
+							onChange={(e) => this.handleChange('author', e)}
+							className={classes.textField}
+							margin="normal"
+						/>
+					</Grid>
+					<Grid item sm="12">
+						<TextField
+							label="Text"
+							multiline
+							rowsMax="4"
+							value={this.state.text}
+							onChange={(e) => this.handleChange('text', e)}
+							className={classes.textField}
+							margin="normal"
+						/>
+					</Grid>
+					<Grid item sm="12">
+						<Button
+							onClick={this.toggleMailDrawer}
+							variant="raised"
+							color="primary"
+							aria-label="add"
+							className={classes.button}
+						>
+							Add Mail
+						</Button>
+					</Grid>
+					<Grid item sm="12">
+						<Grid container spacing={8}>
+							{this.renderStoryMails()}
+						</Grid>
+					</Grid>
+					<Grid container justify="flex-end">
+						<Grid item>{this.evaluateActiveStoryObjectToRenderCorrectButton()}</Grid>
+					</Grid>
+				</Grid>
+			);
+		}
+		return (
+			<Grid container>
+				<Grid item sm="12" lg="6">
+					<Typography variant="headline" component="h2">
+						{this.state.saveMessage}
+					</Typography>
+					<Button
+						variant="raised"
+						color="primary"
+						onClick={this.clearComponentStateAndForm}
+						className={classes.button}
+					>
+						Add more Stories
+					</Button>
+				</Grid>
+			</Grid>
+		);
 	};
 
 	render() {
-		const { title, text, author, showAdd, showMails } = this.state;
+		const { classes } = this.props;
 		return (
-			<MuiShowcase list={this.renderStoryListe()}>
-				<div className="container">
-					<div className="content">
-						<form onSubmit={this.handleSubmit}>
-							<input
-								type="text"
-								name="title"
-								value={title}
-								onChange={(e) => this.handleChange('title', e)}
-							/>
-							<textarea
-								name="text"
-								cols="60"
-								rows="5"
-								value={text}
-								onChange={(e) => this.handleChange('text', e)}
-							/>
-							<input
-								type="text"
-								name="author"
-								value={author}
-								onChange={(e) => this.handleChange('author', e)}
-							/>
-							{showAdd && <button type="submit">Add Story</button>}
-							{!showAdd && (
-								<button type="button" onClick={this.saveChanges}>
-									Save
-								</button>
-							)}
-							<Link to="/mails">Zu den Mails</Link>
-						</form>
-					</div>
-					{this.renderMailListe()}
-					{this.renderMailDetails()}
-					{!showMails && this.props.emailObjects.length > 0 ? (
-						<button type="button" onClick={this.showMails}>
-							Show Mails
-						</button>
-					) : (
-							<div>Go add some mails</div>
-						)}
-					{this.renderStoryMails()}
-				</div>
+			<MuiShowcase list={this.renderStoryList()}>
+				{this.evaluateSaveSuccessFromState()}
+				<Drawer
+					anchor="right"
+					open={this.state.right}
+					classes={{ paper: classes.paper }}
+					onClose={this.toggleMailDrawer}
+				>
+					<Grid
+						container
+						direction="column"
+						wrap="nowrap"
+						justify="space-between"
+						spacing={40}
+						alignContent="stretch"
+					>
+						<Grid item sm="12">
+							<div tabIndex={0} role="button" className={classes.list}>
+								<List component="nav">{this.renderAvailableMails()}</List>
+							</div>
+						</Grid>
+						<Grid item sm="12">
+							{this.renderActiveMailDetails()}
+						</Grid>
+					</Grid>
+				</Drawer>
 			</MuiShowcase>
 		);
 	}
 }
 
-const mapStateToProps = ({ emailObjects, storyObjects }) => ({
+const mapStateToProps = ({ emailObjects, storyArray, activeMail, activeStory }) => ({
 	emailObjects,
-	storyObjects
+	storyArray,
+	activeMail,
+	activeStory
 });
 
-export default connect(mapStateToProps, actions)(StoryObject);
+export default connect(mapStateToProps, actions)(withStyles(styles)(StoryObject));

@@ -4,7 +4,37 @@ import * as actions from '../../actions';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import MuiShowcase from '../../MuiShowcase';
-import { ListItem, ListItemText, Divider } from 'material-ui';
+import {
+	List,
+	ListItem,
+	ListItemText,
+	Grid,
+	TextField,
+	Card,
+	CardActions,
+	CardContent,
+	Typography,
+	Button,
+	Drawer,
+	Divider
+} from 'material-ui';
+import { withStyles } from 'material-ui/styles';
+
+const styles = (theme) => ({
+	textField: {
+		marginLeft: theme.spacing.unit,
+		marginRight: theme.spacing.unit,
+		width: '90%'
+	},
+	textArea: {
+		marginLeft: theme.spacing.unit,
+		marginRight: theme.spacing.unit,
+		width: '95%'
+	},
+	container: {
+		width: '70%'
+	}
+});
 
 class EmailObject extends Component {
 	constructor(props) {
@@ -90,30 +120,9 @@ class EmailObject extends Component {
 	};
 
 	handleChange = (fieldName, e) => {
-		switch (fieldName) {
-			case 'text':
-				this.setState({
-					text: e.target.value
-				});
-				break;
-			case 'title':
-				this.setState({
-					title: e.target.value
-				});
-				break;
-			case 'author':
-				this.setState({
-					author: e.target.value
-				});
-				break;
-			case 'timer':
-				this.setState({
-					timer: e.target.value
-				});
-				break;
-			default:
-				break;
-		}
+		this.setState({
+			[fieldName]: e.target.value
+		});
 	};
 
 	saveChanges = (e) => {
@@ -151,46 +160,54 @@ class EmailObject extends Component {
 	};
 
 	render() {
+		const { classes } = this.props;
 		return (
 			<MuiShowcase list={this.renderListe()}>
-				<div className="container">
-					<div className="content">
-						<form onSubmit={this.handleSubmit}>
-							<input
-								type="text"
-								name="title"
-								value={this.state.title}
-								onChange={(e) => this.handleChange('title', e)}
-							/>
-							<textarea
-								name="text"
-								cols="60"
-								rows="5"
-								value={this.state.text}
-								onChange={(e) => this.handleChange('text', e)}
-							/>
-							<input
-								type="text"
-								name="author"
-								value={this.state.author}
-								onChange={(e) => this.handleChange('author', e)}
-							/>
-							<input
-								type="number"
-								name="timer"
-								value={this.state.timer}
-								onChange={(e) => this.handleChange('timer', e)}
-							/>
-							{this.state.showAdd && <button type="submit">Add EmailObject</button>}
-							{!this.state.showAdd && (
-								<button type="text" onClick={this.saveChanges}>
-									Save
-								</button>
-							)}
-							<Link to="/story">Zu den Storys</Link>
-						</form>
-					</div>
-				</div>
+				<Grid container className={classes.container}>
+					<Grid item sm="12">
+						<TextField
+							required
+							id="required"
+							label="Title"
+							value={this.state.title}
+							onChange={(e) => this.handleChange('title', e)}
+							className={classes.textField}
+							margin="normal"
+						/>
+					</Grid>
+					<Grid item sm="12">
+						<TextField
+							label="Text"
+							multiline
+							rowsMax="4"
+							value={this.state.text}
+							onChange={(e) => this.handleChange('text', e)}
+							className={classes.textField}
+							margin="normal"
+						/>
+					</Grid>
+					<Grid item sm="12">
+						<TextField
+							label="Author"
+							value={this.state.author}
+							onChange={(e) => this.handleChange('author', e)}
+							className={classes.textField}
+							margin="normal"
+						/>
+					</Grid>
+					<Grid item sm="12">
+						<TextField
+							label="Time to finish"
+							type="number"
+							value={this.state.timer}
+							onChange={(e) => this.handleChange('timer', e)}
+							className={classes.textField}
+							margin="normal"
+						/>
+					</Grid>
+					{this.state.showAdd && <Button onClick={this.handleSubmit}>Add EmailObject</Button>}
+					{!this.state.showAdd && <Button color="secondary" onClick={this.saveChanges}>Save</Button>}
+				</Grid>
 			</MuiShowcase>
 		);
 	}
@@ -200,4 +217,4 @@ const mapStateToProps = ({ emailObjects }) => ({
 	emailObjects
 });
 
-export default connect(mapStateToProps, actions)(EmailObject);
+export default connect(mapStateToProps, actions)(withStyles(styles)(EmailObject));
