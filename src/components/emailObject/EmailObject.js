@@ -2,20 +2,13 @@ import React, { Component } from 'react';
 import status from '../../status';
 import * as actions from '../../actions';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
 import MuiShowcase from '../../MuiShowcase';
 import {
-	List,
 	ListItem,
 	ListItemText,
 	Grid,
 	TextField,
-	Card,
-	CardActions,
-	CardContent,
-	Typography,
 	Button,
-	Drawer,
 	Divider
 } from 'material-ui';
 import { withStyles } from 'material-ui/styles';
@@ -162,9 +155,9 @@ class EmailObject extends Component {
 	render() {
 		const { classes } = this.props;
 		return (
-			<MuiShowcase list={this.renderListe()}>
+			<MuiShowcase heading="Define a Mail Object..." list={this.renderListe()}>
 				<Grid container className={classes.container}>
-					<Grid item sm="12">
+					<Grid item sm={12}>
 						<TextField
 							required
 							id="required"
@@ -175,7 +168,7 @@ class EmailObject extends Component {
 							margin="normal"
 						/>
 					</Grid>
-					<Grid item sm="12">
+					<Grid item sm={12}>
 						<TextField
 							label="Text"
 							multiline
@@ -186,7 +179,7 @@ class EmailObject extends Component {
 							margin="normal"
 						/>
 					</Grid>
-					<Grid item sm="12">
+					<Grid item sm={12}>
 						<TextField
 							label="Author"
 							value={this.state.author}
@@ -195,7 +188,7 @@ class EmailObject extends Component {
 							margin="normal"
 						/>
 					</Grid>
-					<Grid item sm="12">
+					<Grid item sm={12}>
 						<TextField
 							label="Time to finish"
 							type="number"

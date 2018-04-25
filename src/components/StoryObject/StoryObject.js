@@ -111,7 +111,7 @@ class StoryObject extends Component {
 	renderAvailableMails = () => {
 		return this.props.emailObjects.map((email, key) => {
 			return (
-				<ListItem button onClick={() => this.addEmailToComponentState(email)}>
+				<ListItem key={key} button onClick={() => this.addEmailToComponentState(email)}>
 					<ListItemText primary={email.title} />
 				</ListItem>
 			);
@@ -119,7 +119,7 @@ class StoryObject extends Component {
 	};
 
 	renderStoryMails = () => {
-		const { classes, activeStory } = this.props;
+		const { classes } = this.props;
 		const { Mails } = this.state;
 		if (Mails) {
 			return Mails.map((mail, key) => {
@@ -182,7 +182,7 @@ class StoryObject extends Component {
 	};
 
 	findActiveStoryAndUpdateValues = (array, compareObject) => {
-		const { id, title, text, author, Mails } = this.state;
+		const { title, text, author, Mails } = this.state;
 		const newStoryObject = {
 			id: compareObject.id,
 			title,
@@ -206,12 +206,11 @@ class StoryObject extends Component {
 		this.setState({
 			saveMessage: 'Changes applied',
 			saveSuccess: true
-		})
+		});
 	};
 
 	evaluateActiveStoryObjectToRenderCorrectButton = () => {
 		const { classes, activeStory } = this.props;
-		console.log(activeStory);
 		if (activeStory.title) {
 			return (
 				<Button
@@ -234,7 +233,7 @@ class StoryObject extends Component {
 		if (!this.state.saveSuccess) {
 			return (
 				<Grid container className={classes.container}>
-					<Grid item sm="12">
+					<Grid item sm={12}>
 						<TextField
 							required
 							id="required"
@@ -245,7 +244,7 @@ class StoryObject extends Component {
 							margin="normal"
 						/>
 					</Grid>
-					<Grid item sm="12">
+					<Grid item sm={12}>
 						<TextField
 							required
 							id="required"
@@ -256,7 +255,7 @@ class StoryObject extends Component {
 							margin="normal"
 						/>
 					</Grid>
-					<Grid item sm="12">
+					<Grid item sm={12}>
 						<TextField
 							label="Text"
 							multiline
@@ -267,7 +266,7 @@ class StoryObject extends Component {
 							margin="normal"
 						/>
 					</Grid>
-					<Grid item sm="12">
+					<Grid item sm={12}>
 						<Button
 							onClick={this.toggleMailDrawer}
 							variant="raised"
@@ -278,7 +277,7 @@ class StoryObject extends Component {
 							Add Mail
 						</Button>
 					</Grid>
-					<Grid item sm="12">
+					<Grid item sm={12}>
 						<Grid container spacing={8}>
 							{this.renderStoryMails()}
 						</Grid>
@@ -291,7 +290,7 @@ class StoryObject extends Component {
 		}
 		return (
 			<Grid container>
-				<Grid item sm="12" lg="6">
+				<Grid item sm={12} lg={6}>
 					<Typography variant="headline" component="h2">
 						{this.state.saveMessage}
 					</Typography>
@@ -311,7 +310,7 @@ class StoryObject extends Component {
 	render() {
 		const { classes } = this.props;
 		return (
-			<MuiShowcase list={this.renderStoryList()}>
+			<MuiShowcase heading="Compose a story..." list={this.renderStoryList()}>
 				{this.evaluateSaveSuccessFromState()}
 				<Drawer
 					anchor="right"
@@ -327,12 +326,12 @@ class StoryObject extends Component {
 						spacing={40}
 						alignContent="stretch"
 					>
-						<Grid item sm="12">
+						<Grid item sm={12}>
 							<div tabIndex={0} role="button" className={classes.list}>
 								<List component="nav">{this.renderAvailableMails()}</List>
 							</div>
 						</Grid>
-						<Grid item sm="12">
+						<Grid item sm={12}>
 							{this.renderActiveMailDetails()}
 						</Grid>
 					</Grid>

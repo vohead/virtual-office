@@ -39,24 +39,24 @@ function MuiShowcase(props) {
 			<AppBar position="absolute" className={classes.appBar}>
 				<Toolbar>
 					<Grid container>
-						<Grid item sm="2">
+						<Grid item sm={2}>
 							<Typography variant="title" color="inherit" noWrap>
-								Clipped drawer
+								<Link to="/" className="link">Virtual Office</Link>
 							</Typography>
 						</Grid>
-						<Grid item sm="9">
-            <Grid container>
-							<Typography variant="title">
-								<Link to="/mails" className="link">
-									Mails
-								</Link>
-							</Typography>
-							<Typography variant="title">
-								<Link to="/story" className="link">
-									Stories
-								</Link>
-							</Typography>
-            </Grid>
+						<Grid item sm={9}>
+							<Grid container>
+								<Typography variant="title">
+									<Link to="/mails" className="link">
+										Mails
+									</Link>
+								</Typography>
+								<Typography variant="title">
+									<Link to="/story" className="link">
+										Stories
+									</Link>
+								</Typography>
+							</Grid>
 						</Grid>
 					</Grid>
 				</Toolbar>
@@ -68,10 +68,11 @@ function MuiShowcase(props) {
 				}}
 			>
 				<div className={classes.toolbar} />
-				<List>{props.list} EXACTLY</List>
+				<List>{props.list}</List>
 			</Drawer>
 			<main className={classes.content}>
 				<div className={classes.toolbar} />
+				<Typography variant="display2" >{props.heading}</Typography>
 				{props.children}
 			</main>
 		</div>

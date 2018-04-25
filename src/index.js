@@ -11,6 +11,7 @@ import reducers from './reducers';
 // import App from './App';
 import StoryPage from './StoryPage';
 import MailPage from './MailPage';
+import WelcomePage from './WelcomePage';
 import MuiShowcase from './MuiShowcase';
 
 const store = createStore(reducers);
@@ -22,6 +23,7 @@ ReactDOM.render(
 				<Route path="/story" component={StoryPage} />
 				<Route path="/mui" component={MuiShowcase} />
 				<Route path="/mails" component={MailPage} />
+				<Route path="/" component={WelcomePage} />
 			</Switch>
 		</Router>
 	</Provider>,
