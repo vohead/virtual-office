@@ -16,6 +16,7 @@ import {
 	Button,
 	Drawer
 } from 'material-ui';
+import { teal } from 'material-ui/colors';
 import { withStyles } from 'material-ui/styles';
 
 const styles = (theme) => ({
@@ -33,6 +34,7 @@ const styles = (theme) => ({
 		width: '70%'
 	},
 	card: {
+		background: teal[400],
 		width: '20%',
 		marginTop: '15px',
 		marginRight: '15px'
@@ -52,6 +54,9 @@ const styles = (theme) => ({
 	},
 	paper: {
 		width: '35%'
+	},
+	title: {
+		color: 'white'
 	}
 });
 
@@ -126,7 +131,7 @@ class StoryObject extends Component {
 				return (
 					<Card className={classes.card} key={key}>
 						<CardContent>
-							<Typography className={classes.title} color="textSecondary">
+							<Typography align="right" variant="display2" className={classes.title}>
 								{mail.title}
 							</Typography>
 							<Typography component="p">

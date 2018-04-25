@@ -9,7 +9,7 @@ const drawerWidth = 240;
 const styles = (theme) => ({
 	root: {
 		flexGrow: 1,
-		height: '100%',
+		minHeight: '100%',
 		zIndex: 1,
 		overflow: 'hidden',
 		position: 'relative',
@@ -20,6 +20,7 @@ const styles = (theme) => ({
 	},
 	drawerPaper: {
 		position: 'relative',
+		height: '100%',
 		width: drawerWidth
 	},
 	content: {

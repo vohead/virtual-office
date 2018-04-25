@@ -147,7 +147,7 @@ class EmailObject extends Component {
 				<ListItem button key={key} onClick={(e) => this.renderEmailObject(email, e)}>
 					<ListItemText primary={email.title} />
 				</ListItem>,
-				<Divider />
+				<Divider key={key + "divider"} />
 			];
 		});
 	};
