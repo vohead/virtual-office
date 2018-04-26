@@ -30,7 +30,7 @@ const theme = createMuiTheme({
 
 ReactDOM.render(
 	<Provider store={store}>
-		<MuiThemeProvider theme={theme}>
+		<MuiThemeProvider >
 			<Router>
 				<Switch>
 					<Route path="/story" component={StoryPage} />

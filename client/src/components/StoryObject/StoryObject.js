@@ -289,7 +289,7 @@ class StoryObject extends Component {
 	};
 
 	evaluateSaveSuccessFromState = () => {
-		const { classes } = this.props;
+		const { classes, activeStory } = this.props;
 
 		if (!this.state.saveSuccess) {
 			return (
@@ -341,6 +341,15 @@ class StoryObject extends Component {
 					</Grid>
 					<Grid item sm={6}>
 						<Grid container justify="flex-end">
+							{activeStory.title && (
+								<Button
+									variant="raised"
+									className={classes.button}
+									onClick={this.clearComponentStateAndForm}
+								>
+									Cancel Editing
+								</Button>
+							)}
 							<Button
 								variant="raised"
 								color="secondary"
