@@ -41,7 +41,8 @@ class EmailObject extends Component {
 			text: '',
 			id: 1,
 			timer: 0,
-			showAdd: true
+			showAdd: true,
+			dependencies: []
 		};
 		// let { timer } = this.props;
 		//   let interval = setInterval(() => {
@@ -73,14 +74,15 @@ class EmailObject extends Component {
 	};
 
 	addEmailObject = () => {
-		const { title, text, author, timer } = this.state;
+		const { title, text, author, timer, dependencies } = this.state;
 		const emailObject = {
 			id: this.state.id,
 			title,
 			text,
 			author,
 			timer,
-			status: status.NOT_STARTED
+			status: status.NOT_STARTED,
+			dependencies
 		};
 		this.props.AddEmailObject(emailObject);
 		this.setState({

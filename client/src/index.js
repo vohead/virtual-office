@@ -19,15 +19,6 @@ import MuiShowcase from './MuiShowcase';
 const store = createStore(reducers);
 
 const theme = createMuiTheme({
-	palette: {
-		primary: {
-			main: teal[400]
-		},
-		background: {
-			paper: teal[200],
-			default: teal[200]
-		}
-	}
 });
 
 ReactDOM.render(

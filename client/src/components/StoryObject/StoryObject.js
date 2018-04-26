@@ -7,6 +7,9 @@ import {
 	List,
 	ListItem,
 	ListItemText,
+	ListItemSecondaryAction,
+	Checkbox,
+	IconButton,
 	Grid,
 	TextField,
 	Card,
@@ -16,7 +19,7 @@ import {
 	Button,
 	Drawer
 } from 'material-ui';
-import { teal } from 'material-ui/colors';
+import CommentIcon from '@material-ui/icons/Comment'
 import { withStyles } from 'material-ui/styles';
 
 const styles = (theme) => ({
@@ -34,7 +37,6 @@ const styles = (theme) => ({
 		width: '70%'
 	},
 	card: {
-		background: teal[400],
 		width: '20%',
 		marginTop: '15px',
 		marginRight: '15px'
@@ -54,9 +56,6 @@ const styles = (theme) => ({
 	},
 	paper: {
 		width: '35%'
-	},
-	title: {
-		color: 'white'
 	}
 });
 
@@ -71,6 +70,7 @@ class StoryObject extends Component {
 			title: '',
 			author: '',
 			Mails: [],
+			mailDependencies: [],
 			saveSuccess: false,
 			saveMessage: 'Save successful'
 		};
@@ -110,13 +110,20 @@ class StoryObject extends Component {
 	};
 
 	addEmailToComponentState = (email) => {
-		this.setState({ Mails: [ ...this.state.Mails, email ] });
+		this.setState({ Mails: [...this.state.Mails, email] });
 	};
+
+activateMailAndSetDependencies = (email) => {
+	this.props.SetActiveMail(email);
+	this.setState({
+		mailDependencies: email.dependencies
+	})
+}
 
 	renderAvailableMails = () => {
 		return this.props.emailObjects.map((email, key) => {
 			return (
-				<ListItem key={key} button onClick={() => this.addEmailToComponentState(email)}>
+				<ListItem key={key} button onClick={() => this.activateMailAndSetDependencies(email)}>
 					<ListItemText primary={email.title} />
 				</ListItem>
 			);
@@ -126,12 +133,13 @@ class StoryObject extends Component {
 	renderStoryMails = () => {
 		const { classes } = this.props;
 		const { Mails } = this.state;
+
 		if (Mails) {
 			return Mails.map((mail, key) => {
 				return (
 					<Card className={classes.card} key={key}>
 						<CardContent>
-							<Typography align="right" variant="display2" className={classes.title}>
+							<Typography align="right" variant="display2" >
 								{mail.title}
 							</Typography>
 							<Typography component="p">
@@ -148,9 +156,64 @@ class StoryObject extends Component {
 		}
 	};
 
+	toggleDependencyCheckbox = (id) => {
+		const { mailDependencies } = this.state;
+		const currentIndex = mailDependencies.indexOf(id);
+		const newMailDependencies = [...mailDependencies];
+
+		if (currentIndex === -1) {
+			newMailDependencies.push(id);
+		} else {
+			newMailDependencies.splice(currentIndex, 1);
+		}
+
+		this.setState({
+			mailDependencies: newMailDependencies,
+		});
+	}
+
 	renderActiveMailDetails = () => {
-		const activeMail = this.props.activeMail;
-		return <p>{activeMail.title}</p>;
+		const { activeMail, classes } = this.props;
+		const { Mails, mailDependencies } = this.state;
+
+		activeMail.dependencies = mailDependencies;
+
+		if (activeMail.title) {
+			return (
+				<div><p>{activeMail.title}</p>
+					<button onClick={() => this.addEmailToComponentState(activeMail)}>Add to story</button>
+
+					<List>
+						{Mails.map((mail, key) => {
+							if (mail.id !== activeMail.id) {
+
+								return (
+									<ListItem
+										key={key}
+										role={undefined}
+										dense
+										button
+										onClick={() => this.toggleDependencyCheckbox(mail.id)}
+									>
+										<Checkbox
+											checked={this.state.mailDependencies.indexOf(mail.id) !== -1}
+											tabIndex={-1}
+											disableRipple
+										/>
+										<ListItemText primary={mail.title} />
+										<ListItemSecondaryAction>
+											<IconButton aria-label="Comments">
+												<CommentIcon />
+											</IconButton>
+										</ListItemSecondaryAction>
+									</ListItem>
+								)
+							}
+						})}
+					</List>
+				</div>
+			);
+		}
 	};
 
 	addStory = () => {
@@ -314,6 +377,7 @@ class StoryObject extends Component {
 
 	render() {
 		const { classes } = this.props;
+		console.log(this.props)
 		return (
 			<MuiShowcase heading="Compose a story..." list={this.renderStoryList()}>
 				{this.evaluateSaveSuccessFromState()}
