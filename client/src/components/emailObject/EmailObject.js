@@ -3,14 +3,12 @@ import status from "../../status";
 import * as actions from "../../actions";
 import { connect } from "react-redux";
 import MuiShowcase from "../../MuiShowcase";
-import { MenuItem } from "material-ui";
 import {
-  ListItem,
-  ListItemText,
+	ListItemText,
+	MenuItem,
   Grid,
   TextField,
-  Button,
-  Divider
+  Button
 } from "material-ui";
 import { withStyles } from "material-ui/styles";
 import { blueGrey } from "material-ui/colors";
@@ -93,7 +91,7 @@ class EmailObject extends Component {
     const emails = [...this.props.emailObjects];
 
     emails.forEach(email => {
-      if (email.id === this.state.id) {
+      if (email.id === this.props.activeMail.id) {
         email.title = this.state.title;
         email.text = this.state.text;
         email.author = this.state.author;
@@ -165,7 +163,6 @@ class EmailObject extends Component {
 
   render() {
     const { classes } = this.props;
-    console.log(this.props.emailObjects);
     return (
       <MuiShowcase
         subheader="My Mails"

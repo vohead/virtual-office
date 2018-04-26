@@ -8,7 +8,6 @@ import {
   Drawer,
   AppBar,
   Toolbar,
-  List,
   Typography,
   Grid
 } from "material-ui";
