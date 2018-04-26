@@ -7,9 +7,7 @@ import {
 	List,
 	ListItem,
 	ListItemText,
-	ListItemSecondaryAction,
 	Checkbox,
-	IconButton,
 	Grid,
 	TextField,
 	Card,
@@ -19,7 +17,6 @@ import {
 	Button,
 	Drawer
 } from 'material-ui';
-import CommentIcon from '@material-ui/icons/Comment'
 import { withStyles } from 'material-ui/styles';
 
 const styles = (theme) => ({
@@ -87,6 +84,7 @@ class StoryObject extends Component {
 	};
 
 	renderStoryList = () => {
+		// eslint-disable-next-line
 		return this.props.storyArray.map((story, key) => {
 			if (story !== undefined) {
 				return (
@@ -105,15 +103,15 @@ class StoryObject extends Component {
 	};
 
 	addEmailToComponentState = (email) => {
-		this.setState({ Mails: [...this.state.Mails, email] });
+		this.setState({ Mails: [ ...this.state.Mails, email ] });
 	};
 
 	activateMailAndSetDependencies = (email) => {
 		this.props.SetActiveMail(email);
 		this.setState({
 			mailDependencies: email.dependencies
-		})
-	}
+		});
+	};
 
 	renderAvailableMails = () => {
 		return this.props.emailObjects.map((email, key) => {
@@ -134,7 +132,7 @@ class StoryObject extends Component {
 				return (
 					<Card className={classes.card} key={key}>
 						<CardContent>
-							<Typography align="right" variant="display2" >
+							<Typography align="right" variant="display2">
 								{mail.title}
 							</Typography>
 							<Typography component="p">
@@ -154,7 +152,7 @@ class StoryObject extends Component {
 	toggleDependencyCheckbox = (id) => {
 		const { mailDependencies } = this.state;
 		const currentIndex = mailDependencies.indexOf(id);
-		const newMailDependencies = [...mailDependencies];
+		const newMailDependencies = [ ...mailDependencies ];
 
 		if (currentIndex === -1) {
 			newMailDependencies.push(id);
@@ -163,25 +161,26 @@ class StoryObject extends Component {
 		}
 
 		this.setState({
-			mailDependencies: newMailDependencies,
+			mailDependencies: newMailDependencies
 		});
-	}
+	};
 
 	renderActiveMailDetails = () => {
-		const { activeMail, classes } = this.props;
+		const { activeMail } = this.props;
 		const { Mails, mailDependencies } = this.state;
 
 		activeMail.dependencies = mailDependencies;
 
 		if (activeMail.title) {
 			return (
-				<div><p>{activeMail.title}</p>
+				<div>
+					<p>{activeMail.title}</p>
 					<button onClick={() => this.addEmailToComponentState(activeMail)}>Add to story</button>
 
 					<List style={{ width: '100%' }}>
-						{Mails.map((mail, key) => {
+						{// eslint-disable-next-line
+						Mails.map((mail, key) => {
 							if (mail.id !== activeMail.id) {
-
 								return (
 									<ListItem
 										key={key}
@@ -196,13 +195,8 @@ class StoryObject extends Component {
 											disableRipple
 										/>
 										<ListItemText primary={mail.status} />
-										<ListItemSecondaryAction>
-											<IconButton aria-label="Comments">
-												<CommentIcon />
-											</IconButton>
-										</ListItemSecondaryAction>
 									</ListItem>
-								)
+								);
 							}
 						})}
 					</List>
@@ -276,10 +270,7 @@ class StoryObject extends Component {
 		const { classes, activeStory } = this.props;
 		if (activeStory.title) {
 			return (
-				<Button
-					variant="raised"
-					onClick={() => this.updateActiveStoryAndReplaceItInStoryArray(activeStory)}
-				>
+				<Button variant="raised" onClick={() => this.updateActiveStoryAndReplaceItInStoryArray(activeStory)}>
 					Save Changes
 				</Button>
 			);
@@ -294,10 +285,11 @@ class StoryObject extends Component {
 	deleteActiveStory = () => {
 		this.props.DeleteStoryObject(this.props.activeStory);
 		this.clearComponentStateAndForm();
-	}
+		this.setState({ saveSuccess: true, saveMessage: 'successfully deleted' });
+	};
 
 	evaluateSaveSuccessFromState = () => {
-		const { classes, activeStory } = this.props;
+		const { classes } = this.props;
 
 		if (!this.state.saveSuccess) {
 			return (
@@ -388,7 +380,7 @@ class StoryObject extends Component {
 
 	render() {
 		const { classes } = this.props;
-		console.log(this.props)
+		console.log(this.props);
 		return (
 			<MuiShowcase heading="Compose a story..." list={this.renderStoryList()}>
 				{this.evaluateSaveSuccessFromState()}

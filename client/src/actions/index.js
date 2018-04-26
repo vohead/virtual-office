@@ -5,6 +5,7 @@ export const SETSTORYOBJECTS = 'set_story_objects';
 export const SETACTIVESTORY = 'set_active_story';
 export const SETACTIVEMAIL = 'set_active_mail';
 export const DELETESTORYOBJECT = 'delete_story_object';
+export const DELETEEMAILOBJECT = 'delete_email_object';
 
 export const AddEmailObject = (email) => {
 	return {
@@ -52,5 +53,13 @@ export const DeleteStoryObject = (story) => {
 	return {
 		type: DELETESTORYOBJECT,
 		payload: story
-	}
-} 
+	};
+};
+
+export const DeleteEmailObject = (email) => {
+	return {
+		type: DELETEEMAILOBJECT,
+		payload: email
+	};
+};
+

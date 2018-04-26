@@ -3,26 +3,14 @@ import status from '../../status';
 import * as actions from '../../actions';
 import { connect } from 'react-redux';
 import MuiShowcase from '../../MuiShowcase';
-import {
-	ListItem,
-	ListItemText,
-	Grid,
-	TextField,
-	Button,
-	Divider
-} from 'material-ui';
+import { ListItem, ListItemText, Grid, TextField, Button, Divider } from 'material-ui';
 import { withStyles } from 'material-ui/styles';
 
 const styles = (theme) => ({
 	textField: {
 		marginLeft: theme.spacing.unit,
 		marginRight: theme.spacing.unit,
-		width: '90%'
-	},
-	textArea: {
-		marginLeft: theme.spacing.unit,
-		marginRight: theme.spacing.unit,
-		width: '95%'
+		width: '100%'
 	},
 	container: {
 		width: '70%'
@@ -42,7 +30,7 @@ class EmailObject extends Component {
 			title: '',
 			author: '',
 			text: '',
-			id: 1,
+			id: 0,
 			timer: 0,
 			showAdd: true,
 			dependencies: []
@@ -76,56 +64,15 @@ class EmailObject extends Component {
 		});
 	};
 
-	addEmailObject = () => {
-		const { title, text, author, timer, dependencies } = this.state;
-		const emailObject = {
-			id: this.state.id,
-			title,
-			text,
-			author,
-			timer,
-			status: status.NOT_STARTED,
-			dependencies
-		};
-		this.props.AddEmailObject(emailObject);
-		this.setState({
-			id: this.state.id + 1
-		});
-	};
-
-	renderEmailObject = (email, e) => {
-		const { id, title, text, author, timer } = email;
-		this.setState({ ...email, showAdd: false });
-		return [
-			<ul>
-				<li>{title}</li>
-				<li>{id}</li>
-				<li>{text}</li>
-				<li>{author}</li>
-				<li>{timer}</li>
-				<li>{this.state.status}</li>
-			</ul>,
-			<form>
-				<textarea name="" id="" cols="30" rows="10" />
-				<button
-					disabled={this.state.status === 'failed' || this.state.status === 'finished'}
-					onClick={this.stop}
-				>
-					Stop
-				</button>
-			</form>
-		];
-	};
-
 	handleChange = (fieldName, e) => {
 		this.setState({
 			[fieldName]: e.target.value
 		});
 	};
 
-	saveChanges = (e) => {
-		e.preventDefault();
+	saveChanges = () => {
 		const emails = [ ...this.props.emailObjects ];
+
 		emails.forEach((email) => {
 			if (email.id === this.state.id) {
 				email.title = this.state.title;
@@ -142,23 +89,50 @@ class EmailObject extends Component {
 	};
 
 	handleSubmit = (e) => {
-		e.preventDefault();
-		this.addEmailObject();
+		const { title, text, author, timer, dependencies } = this.state;
+
+		const emailObject = {
+			id: this.state.id,
+			title,
+			text,
+			author,
+			timer,
+			status: status.NOT_STARTED,
+			dependencies
+		};
+		this.props.AddEmailObject(emailObject);
+		this.setState({
+			id: this.state.id + 1
+		});
+	};
+
+	activateMail = (email) => {
+		this.props.SetActiveMail(email);
+
+		this.setState({
+			...email,
+			showAdd: false
+		});
 	};
 
 	renderListe = () => {
 		return this.props.emailObjects.map((email, key) => {
 			return [
-				<ListItem button key={key} onClick={(e) => this.renderEmailObject(email, e)}>
+				<ListItem button key={key} onClick={() => this.activateMail(email)}>
 					<ListItemText primary={email.title} />
 				</ListItem>,
-				<Divider key={key + "divider"} />
+				<Divider key={key + 'divider'} />
 			];
 		});
 	};
 
+	deleteActiveMail = () => {
+		this.props.DeleteEmailObject(this.props.activeMail);
+	};
+
 	render() {
 		const { classes } = this.props;
+		console.log(this.props.activeMail);
 		return (
 			<MuiShowcase heading="Define a Mail Object..." list={this.renderListe()}>
 				<Grid container className={classes.container}>
@@ -203,16 +177,49 @@ class EmailObject extends Component {
 							margin="normal"
 						/>
 					</Grid>
-					{this.state.showAdd && <Button className={classes.button} variant="raised" color="primary" onClick={this.handleSubmit}>Add EmailObject</Button>}
-					{!this.state.showAdd && <Button className={classes.button} variant="raised" color="secondary" onClick={this.saveChanges}>Save</Button>}
+					<Grid item sm={6}>
+						{this.state.showAdd && (
+							<Button
+								className={classes.button}
+								variant="raised"
+								color="primary"
+								onClick={this.handleSubmit}
+							>
+								Save Mail
+							</Button>
+						)}
+						{!this.state.showAdd && (
+							<Button
+								className={classes.button}
+								variant="raised"
+								color="secondary"
+								onClick={this.saveChanges}
+							>
+								Save Changes
+							</Button>
+						)}
+					</Grid>
+					<Grid item sm={6}>
+						<Grid container justify="flex-end">
+							<Button
+								variant="raised"
+								color="secondary"
+								className={classes.button}
+								onClick={this.deleteActiveMail}
+							>
+								Delete Mail
+							</Button>
+						</Grid>
+					</Grid>
 				</Grid>
 			</MuiShowcase>
 		);
 	}
 }
 
-const mapStateToProps = ({ emailObjects }) => ({
-	emailObjects
+const mapStateToProps = ({ emailObjects, activeMail }) => ({
+	emailObjects,
+	activeMail
 });
 
 export default connect(mapStateToProps, actions)(withStyles(styles)(EmailObject));
