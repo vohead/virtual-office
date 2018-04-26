@@ -26,7 +26,7 @@ const styles = (theme) => ({
 	textField: {
 		marginLeft: theme.spacing.unit,
 		marginRight: theme.spacing.unit,
-		width: '90%'
+		width: '100%'
 	},
 	textArea: {
 		marginLeft: theme.spacing.unit,
@@ -43,13 +43,6 @@ const styles = (theme) => ({
 	},
 	button: {
 		margin: theme.spacing.unit
-	},
-	editButton: {
-		marginTop: '15px',
-		background: '#72cb00',
-		'&:hover': {
-			background: '#a8ff37'
-		}
 	},
 	list: {
 		width: '100%'
@@ -95,11 +88,13 @@ class StoryObject extends Component {
 
 	renderStoryList = () => {
 		return this.props.storyArray.map((story, key) => {
-			return (
-				<ListItem key={key} button onClick={() => this.activateStory(story)}>
-					<ListItemText primary={story.title} />
-				</ListItem>
-			);
+			if (story !== undefined) {
+				return (
+					<ListItem key={key} button onClick={() => this.activateStory(story)}>
+						<ListItemText primary={story.title} />
+					</ListItem>
+				);
+			}
 		});
 	};
 
@@ -113,12 +108,12 @@ class StoryObject extends Component {
 		this.setState({ Mails: [...this.state.Mails, email] });
 	};
 
-activateMailAndSetDependencies = (email) => {
-	this.props.SetActiveMail(email);
-	this.setState({
-		mailDependencies: email.dependencies
-	})
-}
+	activateMailAndSetDependencies = (email) => {
+		this.props.SetActiveMail(email);
+		this.setState({
+			mailDependencies: email.dependencies
+		})
+	}
 
 	renderAvailableMails = () => {
 		return this.props.emailObjects.map((email, key) => {
@@ -183,7 +178,7 @@ activateMailAndSetDependencies = (email) => {
 				<div><p>{activeMail.title}</p>
 					<button onClick={() => this.addEmailToComponentState(activeMail)}>Add to story</button>
 
-					<List>
+					<List style={{ width: '100%' }}>
 						{Mails.map((mail, key) => {
 							if (mail.id !== activeMail.id) {
 
@@ -200,7 +195,7 @@ activateMailAndSetDependencies = (email) => {
 											tabIndex={-1}
 											disableRipple
 										/>
-										<ListItemText primary={mail.title} />
+										<ListItemText primary={mail.status} />
 										<ListItemSecondaryAction>
 											<IconButton aria-label="Comments">
 												<CommentIcon />
@@ -282,22 +277,28 @@ activateMailAndSetDependencies = (email) => {
 		if (activeStory.title) {
 			return (
 				<Button
+					variant="raised"
 					onClick={() => this.updateActiveStoryAndReplaceItInStoryArray(activeStory)}
-					className={classes.editButton}
 				>
 					Save Changes
 				</Button>
 			);
 		}
 		return (
-			<Button color="secondary" onClick={this.addStory} className={classes.button}>
+			<Button variant="raised" color="secondary" onClick={this.addStory} className={classes.button}>
 				Save Story
 			</Button>
 		);
 	};
 
+	deleteActiveStory = () => {
+		this.props.DeleteStoryObject(this.props.activeStory);
+		this.clearComponentStateAndForm();
+	}
+
 	evaluateSaveSuccessFromState = () => {
-		const { classes } = this.props;
+		const { classes, activeStory } = this.props;
+
 		if (!this.state.saveSuccess) {
 			return (
 				<Grid container className={classes.container}>
@@ -334,7 +335,7 @@ activateMailAndSetDependencies = (email) => {
 							margin="normal"
 						/>
 					</Grid>
-					<Grid item sm={12}>
+					<Grid item sm={6}>
 						<Button
 							onClick={this.toggleMailDrawer}
 							variant="raised"
@@ -344,14 +345,24 @@ activateMailAndSetDependencies = (email) => {
 						>
 							Add Mail
 						</Button>
+						{this.evaluateActiveStoryObjectToRenderCorrectButton()}
+					</Grid>
+					<Grid item sm={6}>
+						<Grid container justify="flex-end">
+							<Button
+								variant="raised"
+								color="secondary"
+								className={classes.button}
+								onClick={this.deleteActiveStory}
+							>
+								Delete Story
+							</Button>
+						</Grid>
 					</Grid>
 					<Grid item sm={12}>
 						<Grid container spacing={8}>
 							{this.renderStoryMails()}
 						</Grid>
-					</Grid>
-					<Grid container justify="flex-end">
-						<Grid item>{this.evaluateActiveStoryObjectToRenderCorrectButton()}</Grid>
 					</Grid>
 				</Grid>
 			);

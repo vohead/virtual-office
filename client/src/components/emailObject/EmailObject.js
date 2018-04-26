@@ -26,6 +26,9 @@ const styles = (theme) => ({
 	},
 	container: {
 		width: '70%'
+	},
+	button: {
+		margin: theme.spacing.unit
 	}
 });
 
@@ -200,8 +203,8 @@ class EmailObject extends Component {
 							margin="normal"
 						/>
 					</Grid>
-					{this.state.showAdd && <Button onClick={this.handleSubmit}>Add EmailObject</Button>}
-					{!this.state.showAdd && <Button color="secondary" onClick={this.saveChanges}>Save</Button>}
+					{this.state.showAdd && <Button className={classes.button} variant="raised" color="primary" onClick={this.handleSubmit}>Add EmailObject</Button>}
+					{!this.state.showAdd && <Button className={classes.button} variant="raised" color="secondary" onClick={this.saveChanges}>Save</Button>}
 				</Grid>
 			</MuiShowcase>
 		);

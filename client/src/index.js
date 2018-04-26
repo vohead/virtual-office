@@ -4,13 +4,12 @@ import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { createMuiTheme, MuiThemeProvider } from 'material-ui/styles';
-import { teal } from 'material-ui/colors';
+import { lightBlue } from 'material-ui/colors';
 import 'typeface-roboto';
 import 'normalize-css';
 import './styles.css';
 
 import reducers from './reducers';
-// import App from './App';
 import StoryPage from './StoryPage';
 import MailPage from './MailPage';
 import WelcomePage from './WelcomePage';
@@ -19,6 +18,14 @@ import MuiShowcase from './MuiShowcase';
 const store = createStore(reducers);
 
 const theme = createMuiTheme({
+	palette: {
+		primary: {
+			main: lightBlue[600]
+		},
+		background: {
+			paper: lightBlue[200]
+		}
+	}
 });
 
 ReactDOM.render(
