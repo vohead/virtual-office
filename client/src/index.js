@@ -4,7 +4,7 @@ import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { createMuiTheme, MuiThemeProvider } from 'material-ui/styles';
-import { lightBlue } from 'material-ui/colors';
+import { lightBlue, blueGrey } from 'material-ui/colors';
 import 'typeface-roboto';
 import 'normalize-css';
 import './styles.css';
@@ -20,7 +20,7 @@ const store = createStore(reducers);
 const theme = createMuiTheme({
 	palette: {
 		primary: {
-			main: lightBlue[600]
+			main: blueGrey[500]
 		},
 		background: {
 			paper: lightBlue[200]
@@ -30,7 +30,7 @@ const theme = createMuiTheme({
 
 ReactDOM.render(
 	<Provider store={store}>
-		<MuiThemeProvider >
+		<MuiThemeProvider theme={theme} >
 			<Router>
 				<Switch>
 					<Route path="/story" component={StoryPage} />
