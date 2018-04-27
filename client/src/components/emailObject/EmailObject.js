@@ -226,7 +226,7 @@ class EmailObject extends Component {
               <Button
                 className={classes.button}
                 variant="raised"
-                color="secondary"
+                color="primary"
                 onClick={this.saveChanges}
               >
                 Save Changes

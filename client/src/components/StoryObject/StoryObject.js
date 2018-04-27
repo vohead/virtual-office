@@ -14,9 +14,12 @@ import {
 	CardContent,
 	Typography,
 	Button,
-	Drawer
+	Drawer,
+	MenuItem
 } from 'material-ui';
 import { withStyles } from 'material-ui/styles';
+import { blueGrey } from "material-ui/colors";
+
 
 const styles = (theme) => ({
 	textField: {
@@ -45,7 +48,16 @@ const styles = (theme) => ({
 	},
 	paper: {
 		width: '35%'
-	}
+	},
+	menuItem: {
+		background: blueGrey[200],
+		borderRadius: ".2rem",
+		marginBottom: "0.3rem",
+	
+		"&:focus": {
+		  backgroundColor: theme.palette.primary.main
+		}
+	  }
 });
 
 class StoryObject extends Component {
@@ -61,7 +73,8 @@ class StoryObject extends Component {
 			Mails: [],
 			mailDependencies: [],
 			saveSuccess: false,
-			saveMessage: 'Save successful'
+			saveMessage: 'Save successful',
+			activeMenuItem: null
 		};
 	}
 
@@ -78,18 +91,25 @@ class StoryObject extends Component {
 			author: story.author,
 			text: story.text,
 			Mails: story.Mails,
-			saveSuccess: false
+			saveSuccess: false,
+			activeMenuItem: story.id
 		});
 	};
 
 	renderStoryList = () => {
+		const {classes} = this.props;
 		// eslint-disable-next-line
 		return this.props.storyArray.map((story, key) => {
 			if (story !== undefined) {
 				return (
-					<ListItem key={key} button onClick={() => this.activateStory(story)}>
+					<MenuItem
+						className={classes.menuItem}
+						selected={this.state.activeMenuItem === story.id}
+						key={key}
+						onClick={() => this.activateStory(story)}
+					>
 						<ListItemText primary={story.title} />
-					</ListItem>
+					</MenuItem>
 				);
 			}
 		});
@@ -102,7 +122,7 @@ class StoryObject extends Component {
 	};
 
 	addEmailToComponentState = (email) => {
-		this.setState({ Mails: [ ...this.state.Mails, email ] });
+		this.setState({ Mails: [...this.state.Mails, email] });
 	};
 
 	activateMailAndSetDependencies = (email) => {
@@ -151,7 +171,7 @@ class StoryObject extends Component {
 	toggleDependencyCheckbox = (id) => {
 		const { mailDependencies } = this.state;
 		const currentIndex = mailDependencies.indexOf(id);
-		const newMailDependencies = [ ...mailDependencies ];
+		const newMailDependencies = [...mailDependencies];
 
 		if (currentIndex === -1) {
 			newMailDependencies.push(id);
@@ -178,26 +198,26 @@ class StoryObject extends Component {
 
 					<List style={{ width: '100%' }}>
 						{// eslint-disable-next-line
-						Mails.map((mail, key) => {
-							if (mail.id !== activeMail.id) {
-								return (
-									<ListItem
-										key={key}
-										role={undefined}
-										dense
-										button
-										onClick={() => this.toggleDependencyCheckbox(mail.id)}
-									>
-										<Checkbox
-											checked={this.state.mailDependencies.indexOf(mail.id) !== -1}
-											tabIndex={-1}
-											disableRipple
-										/>
-										<ListItemText primary={mail.status} />
-									</ListItem>
-								);
-							}
-						})}
+							Mails.map((mail, key) => {
+								if (mail.id !== activeMail.id) {
+									return (
+										<ListItem
+											key={key}
+											role={undefined}
+											dense
+											button
+											onClick={() => this.toggleDependencyCheckbox(mail.id)}
+										>
+											<Checkbox
+												checked={this.state.mailDependencies.indexOf(mail.id) !== -1}
+												tabIndex={-1}
+												disableRipple
+											/>
+											<ListItemText primary={mail.status} />
+										</ListItem>
+									);
+								}
+							})}
 					</List>
 				</div>
 			);
@@ -269,13 +289,13 @@ class StoryObject extends Component {
 		const { classes, activeStory } = this.props;
 		if (activeStory.title) {
 			return (
-				<Button variant="raised" onClick={() => this.updateActiveStoryAndReplaceItInStoryArray(activeStory)}>
+				<Button color="primary" variant="raised" onClick={() => this.updateActiveStoryAndReplaceItInStoryArray(activeStory)}>
 					Save Changes
 				</Button>
 			);
 		}
 		return (
-			<Button variant="raised" color="secondary" onClick={this.addStory} className={classes.button}>
+			<Button variant="raised" color="primary" onClick={this.addStory} className={classes.button}>
 				Save Story
 			</Button>
 		);
@@ -390,7 +410,7 @@ class StoryObject extends Component {
 		const { classes } = this.props;
 		console.log(this.props);
 		return (
-			<MuiShowcase heading="Compose a story..." list={this.renderStoryList()}>
+			<MuiShowcase subheader="My Stories" heading="Compose a story..." list={this.renderStoryList()}>
 				{this.evaluateSaveSuccessFromState()}
 				<Drawer
 					anchor="right"
