@@ -50,7 +50,7 @@ class EmailObject extends Component {
       timer: 0,
       showAdd: true,
       dependencies: [],
-      activeMenuItem: null
+      activeMenuItem: null,
     };
     // let { timer } = this.props;
     //   let interval = setInterval(() => {
@@ -161,8 +161,19 @@ class EmailObject extends Component {
     this.props.DeleteEmailObject(this.props.activeMail);
   };
 
+  clearComponentStateAndForm = () => {
+		this.setState({
+			title: '',
+			author: '',
+			text: '',
+			showAdd: true
+		});
+
+		this.props.SetActiveMail({});
+	};
+
   render() {
-    const { classes } = this.props;
+    const { classes, activeMail } = this.props;
     return (
       <MuiShowcase
         subheader="My Mails"
@@ -235,6 +246,15 @@ class EmailObject extends Component {
           </Grid>
           <Grid item sm={6}>
             <Grid container justify="flex-end">
+            {activeMail.title && (
+								<Button
+									variant="raised"
+									className={classes.button}
+									onClick={this.clearComponentStateAndForm}
+								>
+									Cancel Editing
+								</Button>
+							)}
               <Button
                 variant="raised"
                 color="secondary"
