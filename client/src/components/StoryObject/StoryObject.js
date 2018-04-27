@@ -146,7 +146,7 @@ class StoryObject extends Component {
 	};
 
 	renderAvailableMails = () => {
-		const { classes, story, emailObjects } = this.props
+		const { classes, emailObjects } = this.props
 		if (emailObjects.length > 0) {
 
 			return emailObjects.map((email, key) => {

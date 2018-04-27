@@ -4,7 +4,8 @@ import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { createMuiTheme, MuiThemeProvider } from 'material-ui/styles';
-import { lightBlue, blueGrey } from 'material-ui/colors';
+import requireAuth from './components/hoc/requireAuth';
+import { blueGrey } from 'material-ui/colors';
 import 'typeface-roboto';
 import 'normalize-css';
 import './styles.css';
@@ -30,12 +31,12 @@ const theme = createMuiTheme({
 
 ReactDOM.render(
 	<Provider store={store}>
-		<MuiThemeProvider theme={theme} >
+		<MuiThemeProvider theme={theme}>
 			<Router>
 				<Switch>
-					<Route path="/story" component={StoryPage} />
+					<Route path="/story" component={requireAuth(StoryPage)} />
 					<Route path="/mui" component={MuiShowcase} />
-					<Route path="/mails" component={MailPage} />
+					<Route path="/mails" component={requireAuth(MailPage)} />
 					<Route path="/" component={WelcomePage} />
 				</Switch>
 			</Router>

@@ -6,6 +6,7 @@ export const SETACTIVESTORY = 'set_active_story';
 export const SETACTIVEMAIL = 'set_active_mail';
 export const DELETESTORYOBJECT = 'delete_story_object';
 export const DELETEEMAILOBJECT = 'delete_email_object';
+export const SETAUTH = 'set_auth';
 
 export const AddEmailObject = (email) => {
 	return {
@@ -63,3 +64,9 @@ export const DeleteEmailObject = (email) => {
 	};
 };
 
+export const SetAuth = (authValue) => {
+	return {
+		type: SETAUTH,
+		payload: authValue
+	};
+};

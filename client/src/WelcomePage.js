@@ -1,9 +1,26 @@
 import React, { Component } from 'react';
-import { Button, Grid, Typography } from 'material-ui';
+import { Button, Grid, Typography, FormControl, InputLabel, Input, InputAdornment, IconButton } from 'material-ui';
+import { Visibility, VisibilityOff } from '@material-ui/icons';
 import { withStyles } from 'material-ui/styles';
 import { Redirect } from 'react-router-dom';
+import { connect } from 'react-redux';
+import * as actions from './actions';
+import axios from 'axios';
 
 const styles = (theme) => ({
+	root: {
+		display: 'flex',
+		flexWrap: 'wrap'
+	},
+	margin: {
+		margin: theme.spacing.unit
+	},
+	withoutLabel: {
+		marginTop: theme.spacing.unit * 3
+	},
+	textField: {
+		flexBasis: 200
+	},
 	container: {
 		margin: '0 auto',
 		height: '100%'
@@ -11,30 +28,85 @@ const styles = (theme) => ({
 });
 
 class WelcomePage extends Component {
-  constructor(props) {
-    super(props)
-  
-    this.state = {
-       redirect: false
-    }
-  }
-  
-	redirectToMails = () => {
-		this.setState({redirect: true})
+	constructor(props) {
+		super(props);
+
+		this.state = {
+			redirect: false,
+			username: null,
+			password: null,
+			showPassword: false
+		};
+	}
+
+	login = () => {
+		axios.post('/api/signin/', { username: this.state.username, password: this.state.password }).then((res) => {
+			this.props.SetAuth(res.data);
+			this.setState({ redirect: res.data.auth });
+		});
+	};
+
+	handleChange = (fieldName, e) => {
+		this.setState({
+			[fieldName]: e.target.value
+		});
+	};
+
+	handleMouseDownPassword = (event) => {
+		event.preventDefault();
+	};
+
+	handleClickShowPassword = () => {
+		this.setState({ showPassword: !this.state.showPassword });
 	};
 
 	render() {
-    const { classes } = this.props;
-    if(this.state.redirect){
-      return <Redirect to="/mails" />;
-    }
+		const { classes } = this.props;
+		console.log(this.state.redirect);
+		if (this.state.redirect) {
+			return <Redirect to="/mails" />;
+		}
 		return (
 			<Grid container alignItems="center" justify="center" direction="column" className={classes.container}>
 				<Grid item>
 					<Typography variant="display3">Virtual Office</Typography>
 				</Grid>
 				<Grid item>
-					<Button variant="raised" color="primary" onClick={this.redirectToMails}>
+					<FormControl className={classes.textField} aria-describedby="weight-helper-text">
+						<Input
+							id="adornment-weight"
+							value={this.state.weight}
+							onChange={(e) => this.handleChange('username', e)}
+							inputProps={{
+								'aria-label': 'username'
+							}}
+						/>
+					</FormControl>
+				</Grid>
+				<Grid item>
+					<FormControl className={classes.textField}>
+						<InputLabel htmlFor="adornment-password">Password</InputLabel>
+						<Input
+							id="adornment-password"
+							type={this.state.showPassword ? 'text' : 'password'}
+							value={this.state.password}
+							onChange={(e) => this.handleChange('password', e)}
+							endAdornment={
+								<InputAdornment position="end">
+									<IconButton
+										aria-label="Toggle password visibility"
+										onClick={this.handleClickShowPassword}
+										onMouseDown={this.handleMouseDownPassword}
+									>
+										{this.state.showPassword ? <VisibilityOff /> : <Visibility />}
+									</IconButton>
+								</InputAdornment>
+							}
+						/>
+					</FormControl>
+				</Grid>
+				<Grid item>
+					<Button variant="raised" color="primary" onClick={this.login}>
 						Login
 					</Button>
 				</Grid>
@@ -43,4 +115,4 @@ class WelcomePage extends Component {
 	}
 }
 
-export default withStyles(styles)(WelcomePage);
+export default connect(null, actions)(withStyles(styles)(WelcomePage));
