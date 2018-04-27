@@ -23,7 +23,7 @@ const theme = createMuiTheme({
 			main: blueGrey[500]
 		},
 		background: {
-			paper: lightBlue[200]
+			paper: blueGrey[50]
 		}
 	}
 });

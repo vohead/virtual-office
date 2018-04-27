@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../../actions';
 import MuiShowcase from '../../MuiShowcase';
@@ -15,7 +15,11 @@ import {
 	Typography,
 	Button,
 	Drawer,
-	MenuItem
+	MenuItem,
+	MenuList,
+	ListSubheader,
+	Divider,
+	Paper
 } from 'material-ui';
 import { withStyles } from 'material-ui/styles';
 import { blueGrey } from "material-ui/colors";
@@ -53,11 +57,19 @@ const styles = (theme) => ({
 		background: blueGrey[200],
 		borderRadius: ".2rem",
 		marginBottom: "0.3rem",
-	
+
 		"&:focus": {
-		  backgroundColor: theme.palette.primary.main
+			backgroundColor: theme.palette.primary.main
 		}
-	  }
+
+	},
+	menuList: {
+		padding: "1rem"
+	},
+	activeMailDetails: {
+		padding: "1rem",
+
+	}
 });
 
 class StoryObject extends Component {
@@ -97,7 +109,7 @@ class StoryObject extends Component {
 	};
 
 	renderStoryList = () => {
-		const {classes} = this.props;
+		const { classes } = this.props;
 		// eslint-disable-next-line
 		return this.props.storyArray.map((story, key) => {
 			if (story !== undefined) {
@@ -119,6 +131,7 @@ class StoryObject extends Component {
 		this.setState({
 			right: this.state.right ? false : true
 		});
+		this.props.SetActiveMail({});
 	};
 
 	addEmailToComponentState = (email) => {
@@ -133,13 +146,25 @@ class StoryObject extends Component {
 	};
 
 	renderAvailableMails = () => {
-		return this.props.emailObjects.map((email, key) => {
-			return (
-				<ListItem key={key} button onClick={() => this.activateMailAndSetDependencies(email)}>
-					<ListItemText primary={email.title} />
-				</ListItem>
-			);
-		});
+		const { classes, story, emailObjects } = this.props
+		if (emailObjects.length > 0) {
+
+			return emailObjects.map((email, key) => {
+				return (
+
+					<MenuItem
+						className={classes.menuItem}
+						selected={this.state.activeMenuItem === email.id}
+						key={key}
+						onClick={() => this.activateMailAndSetDependencies(email)}
+					>
+						<ListItemText primary={email.title} />
+					</MenuItem>
+
+				);
+			});
+		}
+		return <p>LALALALA</p>
 	};
 
 	renderStoryMails = () => {
@@ -185,15 +210,20 @@ class StoryObject extends Component {
 	};
 
 	renderActiveMailDetails = () => {
-		const { activeMail } = this.props;
+		const { activeMail, classes } = this.props;
 		const { Mails, mailDependencies } = this.state;
 
 		activeMail.dependencies = mailDependencies;
 
 		if (activeMail.title) {
 			return (
-				<div>
+				<Paper className={classes.activeMailDetails}>
+					<Typography variant="headline" color="inherit" noWrap align="left">
+						Details:
+				</Typography>
 					<p>{activeMail.title}</p>
+					<p>{activeMail.author}</p>
+					<p>{activeMail.timer}</p>
 					<button onClick={() => this.addEmailToComponentState(activeMail)}>Add to story</button>
 
 					<List style={{ width: '100%' }}>
@@ -219,7 +249,7 @@ class StoryObject extends Component {
 								}
 							})}
 					</List>
-				</div>
+				</Paper>
 			);
 		}
 	};
@@ -408,7 +438,7 @@ class StoryObject extends Component {
 
 	render() {
 		const { classes } = this.props;
-		console.log(this.props);
+		console.log(this.props.emailObjects.length);
 		return (
 			<MuiShowcase subheader="My Stories" heading="Compose a story..." list={this.renderStoryList()}>
 				{this.evaluateSaveSuccessFromState()}
@@ -428,11 +458,23 @@ class StoryObject extends Component {
 					>
 						<Grid item sm={12}>
 							<div tabIndex={0} role="button" className={classes.list}>
-								<List component="nav">{this.renderAvailableMails()}</List>
+								<MenuList subheader={
+									<Fragment>
+										<ListSubheader>
+											<Typography variant="headline" color="inherit" noWrap align="center">
+												Mails
+											</Typography>
+										</ListSubheader>
+										<Divider style={{ marginBottom: "1.5rem" }} />
+									</Fragment>
+								}
+									className={classes.menuList}>{this.renderAvailableMails()}</MenuList>
 							</div>
 						</Grid>
 						<Grid item sm={12}>
-							{this.renderActiveMailDetails()}
+							<div className={classes.activeMailDetails} >
+								{this.renderActiveMailDetails()}
+							</div>
 						</Grid>
 					</Grid>
 				</Drawer>
