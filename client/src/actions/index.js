@@ -20,7 +20,7 @@ export const AddEmailObject = email => {
     payload: email
   };
 };
-
+// HALLO
 export const SetEmailObjects = emails => {
   return {
     type: SETEMAILOBJECTS,
