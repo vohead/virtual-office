@@ -49,36 +49,14 @@ class EmailObject extends Component {
       id: 0,
       timer: 0,
       showAdd: true,
-      dependencies: [],
       activeMenuItem: null,
     };
-    // let { timer } = this.props;
-    //   let interval = setInterval(() => {
-    //     timer--;
-    //     console.log(timer);
-    //     if (this.state.status === status.FINISHED) {
-    //       clearInterval(interval)
-    //     }
-    //     if (timer === 0) {
-    //       // TODO: Implement logic to handle failure
-    //       this.setState({
-    //         status: status.FAILED
-    //       })
-    //       clearInterval(interval);
-    //     }
-    //   }, 1000)
   }
 
   componentDidMount = () => {
     this.props.FetchEmails();
     this.setState({
       status: status.IN_PROGRESS
-    });
-  };
-
-  stop = () => {
-    this.setState({
-      status: status.FINISHED
     });
   };
 
@@ -89,18 +67,8 @@ class EmailObject extends Component {
   };
 
   saveChanges = () => {
-    const emails = [...this.props.emailObjects];
     const { title, text, author, timer } = this.state;
 
-    // emails.forEach(email => {
-    //   if (email.id === this.props.activeMail.id) {
-    //     email.title = this.state.title;
-    //     email.text = this.state.text;
-    //     email.author = this.state.author;
-    //     email.timer = this.state.timer;
-    //   }
-    // });
-    // this.props.SetEmailObjects(emails);
     const updateValues = {
       id: this.props.activeMail._id,
       title,
@@ -108,7 +76,7 @@ class EmailObject extends Component {
       author,
       timer,
     }
-    console.log(updateValues)
+
     this.props.UpdateMail(updateValues);
     
     this.setState({
@@ -131,7 +99,9 @@ class EmailObject extends Component {
       timer,
       status: status.NOT_STARTED
     };
+
     this.props.SaveMail(emailObject);
+    
     this.setState({
       id: this.state.id + 1
     });

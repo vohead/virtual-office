@@ -47,8 +47,8 @@ class WelcomePage extends Component {
 		});
 	};
 
-	handleMouseDownPassword = (event) => {
-		event.preventDefault();
+	handleMouseDownPassword = (e) => {
+		e.preventDefault();
 	};
 
 	handleClickShowPassword = () => {
@@ -67,11 +67,12 @@ class WelcomePage extends Component {
 					<Typography variant="display3">Virtual Office</Typography>
 				</Grid>
 				<Grid item>
-					<FormControl className={classes.textField} aria-describedby="weight-helper-text">
+					<FormControl>
 						<Input
 							id="adornment-weight"
 							value={this.state.weight}
 							onChange={(e) => this.handleChange('username', e)}
+							className={classes.textField}
 							inputProps={{
 								'aria-label': 'username'
 							}}

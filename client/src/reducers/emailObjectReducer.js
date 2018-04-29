@@ -1,28 +1,36 @@
-import { ADDEMAILOBJECT, SETEMAILOBJECTS, DELETEEMAILOBJECT, FETCHEMAILS, SAVEMAIL } from '../actions';
+import { DELETEEMAILOBJECT, FETCHEMAILS, SAVEMAIL, UPDATEMAIL } from '../actions';
 
 export default (state = [], action) => {
 	switch (action.type) {
 		case DELETEEMAILOBJECT:
-		const currentState = [ ...state ];
-		const newState = [];
-		// eslint-disable-next-line
-		currentState.map((story, index) => {
-			if (story.id !== action.payload.id) {
-				newState.push(story);
-			}
-		});
-		return newState;
-		case ADDEMAILOBJECT:
-			return [ ...state, action.payload ];
-
-		case SETEMAILOBJECTS:
-			return action.payload;
+			const currentState = [ ...state ];
+			const newState = [];
+			// eslint-disable-next-line
+			currentState.map((story, index) => {
+				if (story.id !== action.payload.id) {
+					newState.push(story);
+				}
+			});
+			return newState;
 
 		case FETCHEMAILS:
-		return action.payload;
+			return action.payload;
 
 		case SAVEMAIL:
 			return [ ...state, action.payload ];
+
+		case UPDATEMAIL:
+			const currentMails = [ ...state ];
+			const newMails = [];
+			// eslint-disable-next-line
+			currentMails.map((email) => {
+				if (email._id !== action.payload._id) {
+					newMails.push(email);
+				} else {
+					newMails.push(action.payload);
+				}
+			});
+			return newMails;
 
 		default:
 			return state;

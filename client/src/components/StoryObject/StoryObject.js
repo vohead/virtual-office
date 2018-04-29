@@ -1,7 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../../actions';
-import axios from 'axios';
 import MuiShowcase from '../../MuiShowcase';
 import {
 	List,
@@ -80,7 +79,7 @@ class StoryObject extends Component {
 			text: '',
 			title: '',
 			author: '',
-			Mails: [],
+			emails: [],
 			mailDependencies: [],
 			saveSuccess: false,
 			saveMessage: 'Save successful',
@@ -88,10 +87,9 @@ class StoryObject extends Component {
 		};
 	}
 
-componentDidMount = () => {
-	this.props.FetchStories();
-}
-
+	componentDidMount = () => {
+		this.props.FetchStories();
+	};
 
 	handleChange = (name, e) => {
 		this.setState({
@@ -105,7 +103,7 @@ componentDidMount = () => {
 			title: story.title,
 			author: story.author,
 			text: story.text,
-			Mails: story.Mails,
+			emails: story.emails,
 			saveSuccess: false,
 			activeMenuItem: story.id
 		});
@@ -164,15 +162,15 @@ componentDidMount = () => {
 				);
 			});
 		}
-		return <p>LALALALA</p>;
+		return <p>LALALA</p>;
 	};
 
 	renderStoryMails = () => {
 		const { classes } = this.props;
-		const { Mails } = this.state;
+		const { emails } = this.state;
 
-		if (Mails) {
-			return Mails.map((mail, key) => {
+		if (emails) {
+			return emails.map((mail, key) => {
 				return (
 					<Card className={classes.card} key={key}>
 						<CardContent>
@@ -211,7 +209,7 @@ componentDidMount = () => {
 
 	renderActiveMailDetails = () => {
 		const { activeMail, classes } = this.props;
-		const { Mails, mailDependencies } = this.state;
+		const { emails, mailDependencies } = this.state;
 
 		activeMail.dependencies = mailDependencies;
 
@@ -228,7 +226,7 @@ componentDidMount = () => {
 
 					<List style={{ width: '100%' }}>
 						{// eslint-disable-next-line
-						Mails.map((mail, key) => {
+						emails.map((mail, key) => {
 							if (mail.id !== activeMail.id) {
 								return (
 									<ListItem
@@ -255,29 +253,24 @@ componentDidMount = () => {
 	};
 
 	addStory = () => {
-		const { id, title, text, author, Mails } = this.state;
-		axios
-			.post('/api/story', {
-				title,
-				text,
-				author,
-			})
-			.then((res) => console.log(res));
+		const { title, text, author, emails } = this.state;
+
 		const story = {
-			id,
 			title,
 			author,
 			text,
-			Mails
+			emails
 		};
-		this.props.AddStoryObject(story);
+
+		this.props.SaveStory(story);
+
 		this.props.SetActiveStory({});
+
 		this.setState({
-			id: id + 1,
 			text: '',
 			title: '',
 			author: '',
-			Mails: [],
+			emails: [],
 			saveSuccess: true
 		});
 	};
@@ -287,7 +280,7 @@ componentDidMount = () => {
 			title: '',
 			author: '',
 			text: '',
-			Mails: [],
+			emails: [],
 			saveSuccess: false
 		});
 
@@ -295,13 +288,13 @@ componentDidMount = () => {
 	};
 
 	findActiveStoryAndUpdateValues = (array, compareObject) => {
-		const { title, text, author, Mails } = this.state;
+		const { title, text, author, emails } = this.state;
 		const newStoryObject = {
 			id: compareObject.id,
 			title,
 			author,
 			text,
-			Mails
+			emails
 		};
 
 		return array.map((element) => {
@@ -449,7 +442,6 @@ componentDidMount = () => {
 
 	render() {
 		const { classes } = this.props;
-		console.log(this.props.emailObjects.length);
 		return (
 			<MuiShowcase subheader="My Stories" heading="Compose a story..." list={this.renderStoryList()}>
 				{this.evaluateSaveSuccessFromState()}

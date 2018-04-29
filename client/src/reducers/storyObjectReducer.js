@@ -1,4 +1,4 @@
-import { ADDSTORYOBJECT, SETSTORYOBJECTS, DELETESTORYOBJECT, FETCHSTORIES } from '../actions';
+import { SAVESTORY, DELETESTORYOBJECT, FETCHSTORIES } from '../actions';
 
 export default (state = [], action) => {
 	switch (action.type) {
@@ -12,10 +12,8 @@ export default (state = [], action) => {
 				}
 			});
 			return newState;
-		case ADDSTORYOBJECT:
+		case SAVESTORY:
 			return [ ...state, action.payload ];
-		case SETSTORYOBJECTS:
-			return action.payload;
 		case FETCHSTORIES:
 			return action.payload;
 		default:
