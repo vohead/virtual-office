@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 export const ADDEMAILOBJECT = 'add_email_object';
 export const SETEMAILOBJECTS = 'set_email_objects';
 export const ADDSTORYOBJECT = 'add_story_object';
@@ -6,7 +8,9 @@ export const SETACTIVESTORY = 'set_active_story';
 export const SETACTIVEMAIL = 'set_active_mail';
 export const DELETESTORYOBJECT = 'delete_story_object';
 export const DELETEEMAILOBJECT = 'delete_email_object';
-export const SETAUTH = 'set_auth';
+export const LOGIN = 'login';
+export const LOGOUT = 'logout';
+export const FETCHSTORIES = 'fetch_stories';
 
 export const AddEmailObject = (email) => {
 	return {
@@ -64,9 +68,26 @@ export const DeleteEmailObject = (email) => {
 	};
 };
 
-export const SetAuth = (authValue) => {
-	return {
-		type: SETAUTH,
-		payload: authValue
-	};
+export const Login = (username, password) => async (dispatch) => {
+	const res = await axios.post('/api/signin/', { username, password });
+	dispatch({
+		type: LOGIN,
+		payload: res.data
+	});
+};
+
+export const Logout = () => async (dispatch) => {
+	const res = await axios.get('/api/logout');
+	dispatch({
+		type: LOGOUT,
+		payload: res.data
+	});
+};
+
+export const FetchStories = () => async (dispatch) => {
+	const res = await axios.get('/api/stories');
+	dispatch({
+		type: FETCHSTORIES,
+		payload: res.data
+	});
 };

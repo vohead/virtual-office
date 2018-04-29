@@ -5,7 +5,7 @@ import { Redirect } from 'react-router-dom';
 export default (ChildComponent) => {
 	class RequireAuth extends Component {
 		render() {
-			switch (this.props.authInformation.auth) {
+			switch (this.props.auth) {
 				case false:
 					return <Redirect to="/" />;
 				case null:
@@ -16,8 +16,8 @@ export default (ChildComponent) => {
 		}
 	}
 
-	const mapStateToProps = ({ authInformation }) => ({
-		authInformation
+	const mapStateToProps = ({ auth}) => ({
+		auth
 	});
 
 	return connect(mapStateToProps)(RequireAuth);

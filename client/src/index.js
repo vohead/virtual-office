@@ -1,8 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { createStore } from 'redux';
+import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import reduxThunk from 'redux-thunk';
 import { createMuiTheme, MuiThemeProvider } from 'material-ui/styles';
 import requireAuth from './components/hoc/requireAuth';
 import { blueGrey } from 'material-ui/colors';
@@ -16,7 +17,7 @@ import MailPage from './MailPage';
 import WelcomePage from './WelcomePage';
 import MuiShowcase from './MuiShowcase';
 
-const store = createStore(reducers);
+const store = createStore(reducers, applyMiddleware(reduxThunk));
 
 const theme = createMuiTheme({
 	palette: {

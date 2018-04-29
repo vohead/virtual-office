@@ -2,8 +2,9 @@ import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import { connect } from 'react-redux';
-import { Divider, ListSubheader, MenuList, Drawer, AppBar, Toolbar, Typography, Grid } from 'material-ui';
+import { Button, Divider, ListSubheader, MenuList, Drawer, AppBar, Toolbar, Typography, Grid } from 'material-ui';
 import { Link } from 'react-router-dom';
+import * as actions from './actions';
 import menuBackground from './pictures/office-menu-background.jpg';
 
 const drawerWidth = 240;
@@ -74,8 +75,10 @@ function MuiShowcase(props) {
 						</Grid>
 						<Grid item sm={3}>
 							<Grid container justify="space-between">
-								<Typography variant="title">Welcome {props.authInformation.username}</Typography>
-                <Typography variant="title">Logout</Typography>
+								<Typography variant="title">Welcome User</Typography>
+								<Button variant="raised" onClick={props.Logout}>
+									Logout
+								</Button>
 							</Grid>
 						</Grid>
 					</Grid>
@@ -117,8 +120,6 @@ MuiShowcase.propTypes = {
 	classes: PropTypes.object.isRequired
 };
 
-const mapStateToProps = ({ authInformation }) => ({
-	authInformation
-});
 
-export default connect(mapStateToProps, null)(withStyles(styles)(MuiShowcase));
+
+export default connect(null, actions)(withStyles(styles)(MuiShowcase));

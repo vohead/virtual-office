@@ -1,7 +1,24 @@
 const passport = require('passport');
-const User = require('./models/user');
+const mongoose = require('mongoose');
 const LocalStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcrypt-nodejs');
+const User = mongoose.model('user');
+
+passport.serializeUser((user, done) => {
+	done(null, user.id);
+});
+
+passport.deserializeUser((id, done) => {
+	User.findById(id, (err, user) => {
+		if (err) {
+			return done(err);
+		}
+		if (!user) {
+			return done(null, false);
+		}
+		done(null, user);
+	});
+});
 
 const localLogin = new LocalStrategy((username, password, done) => {
 	// Verify the username and password
@@ -24,4 +41,4 @@ const localLogin = new LocalStrategy((username, password, done) => {
 	});
 });
 
-passport.use(localLogin);
+passport.use('local', localLogin);

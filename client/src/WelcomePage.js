@@ -5,7 +5,6 @@ import { withStyles } from 'material-ui/styles';
 import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import * as actions from './actions';
-import axios from 'axios';
 
 const styles = (theme) => ({
 	root: {
@@ -32,7 +31,6 @@ class WelcomePage extends Component {
 		super(props);
 
 		this.state = {
-			redirect: false,
 			username: null,
 			password: null,
 			showPassword: false
@@ -40,10 +38,7 @@ class WelcomePage extends Component {
 	}
 
 	login = () => {
-		axios.post('/api/signin/', { username: this.state.username, password: this.state.password }).then((res) => {
-			this.props.SetAuth(res.data);
-			this.setState({ redirect: res.data.auth });
-		});
+		this.props.Login(this.state.username, this.state.password);
 	};
 
 	handleChange = (fieldName, e) => {
@@ -62,8 +57,8 @@ class WelcomePage extends Component {
 
 	render() {
 		const { classes } = this.props;
-		console.log(this.state.redirect);
-		if (this.state.redirect) {
+
+		if (this.props.auth) {
 			return <Redirect to="/mails" />;
 		}
 		return (
@@ -115,4 +110,8 @@ class WelcomePage extends Component {
 	}
 }
 
-export default connect(null, actions)(withStyles(styles)(WelcomePage));
+const mapStateToProps = ({ auth }) => ({
+	auth
+});
+
+export default connect(mapStateToProps, actions)(withStyles(styles)(WelcomePage));

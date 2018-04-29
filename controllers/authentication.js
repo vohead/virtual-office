@@ -3,7 +3,6 @@ const User = require('../models/user');
 exports.signup = (req, res, next) => {
 	const username = req.body.username;
 	const password = req.body.password;
-
 	if (!username || !password) {
 		return res.status(422).send({ error: 'You must provide username and password' });
 	}
@@ -29,5 +28,10 @@ exports.signup = (req, res, next) => {
 };
 
 exports.signin = (req, res, next) => {
-	res.send({ auth: true, username: req.user.username });
+	res.send(true);
+};
+
+exports.signout = (req, res, next) => {
+	req.logout();
+	res.send(false);
 };

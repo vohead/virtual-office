@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../../actions';
+import axios from 'axios';
 import MuiShowcase from '../../MuiShowcase';
 import {
 	List,
@@ -22,8 +23,7 @@ import {
 	Paper
 } from 'material-ui';
 import { withStyles } from 'material-ui/styles';
-import { blueGrey } from "material-ui/colors";
-
+import { blueGrey } from 'material-ui/colors';
 
 const styles = (theme) => ({
 	textField: {
@@ -55,20 +55,18 @@ const styles = (theme) => ({
 	},
 	menuItem: {
 		background: blueGrey[200],
-		borderRadius: ".2rem",
-		marginBottom: "0.3rem",
+		borderRadius: '.2rem',
+		marginBottom: '0.3rem',
 
-		"&:focus": {
+		'&:focus': {
 			backgroundColor: theme.palette.primary.main
 		}
-
 	},
 	menuList: {
-		padding: "1rem"
+		padding: '1rem'
 	},
 	activeMailDetails: {
-		padding: "1rem",
-
+		padding: '1rem'
 	}
 });
 
@@ -89,6 +87,11 @@ class StoryObject extends Component {
 			activeMenuItem: null
 		};
 	}
+
+componentDidMount = () => {
+	this.props.FetchStories();
+}
+
 
 	handleChange = (name, e) => {
 		this.setState({
@@ -135,7 +138,7 @@ class StoryObject extends Component {
 	};
 
 	addEmailToComponentState = (email) => {
-		this.setState({ Mails: [...this.state.Mails, email] });
+		this.setState({ Mails: [ ...this.state.Mails, email ] });
 	};
 
 	activateMailAndSetDependencies = (email) => {
@@ -146,12 +149,10 @@ class StoryObject extends Component {
 	};
 
 	renderAvailableMails = () => {
-		const { classes, emailObjects } = this.props
+		const { classes, emailObjects } = this.props;
 		if (emailObjects.length > 0) {
-
 			return emailObjects.map((email, key) => {
 				return (
-
 					<MenuItem
 						className={classes.menuItem}
 						selected={this.state.activeMenuItem === email.id}
@@ -160,11 +161,10 @@ class StoryObject extends Component {
 					>
 						<ListItemText primary={email.title} />
 					</MenuItem>
-
 				);
 			});
 		}
-		return <p>LALALALA</p>
+		return <p>LALALALA</p>;
 	};
 
 	renderStoryMails = () => {
@@ -196,7 +196,7 @@ class StoryObject extends Component {
 	toggleDependencyCheckbox = (id) => {
 		const { mailDependencies } = this.state;
 		const currentIndex = mailDependencies.indexOf(id);
-		const newMailDependencies = [...mailDependencies];
+		const newMailDependencies = [ ...mailDependencies ];
 
 		if (currentIndex === -1) {
 			newMailDependencies.push(id);
@@ -220,7 +220,7 @@ class StoryObject extends Component {
 				<Paper className={classes.activeMailDetails}>
 					<Typography variant="headline" color="inherit" noWrap align="left">
 						Details:
-				</Typography>
+					</Typography>
 					<p>{activeMail.title}</p>
 					<p>{activeMail.author}</p>
 					<p>{activeMail.timer}</p>
@@ -228,26 +228,26 @@ class StoryObject extends Component {
 
 					<List style={{ width: '100%' }}>
 						{// eslint-disable-next-line
-							Mails.map((mail, key) => {
-								if (mail.id !== activeMail.id) {
-									return (
-										<ListItem
-											key={key}
-											role={undefined}
-											dense
-											button
-											onClick={() => this.toggleDependencyCheckbox(mail.id)}
-										>
-											<Checkbox
-												checked={this.state.mailDependencies.indexOf(mail.id) !== -1}
-												tabIndex={-1}
-												disableRipple
-											/>
-											<ListItemText primary={mail.status} />
-										</ListItem>
-									);
-								}
-							})}
+						Mails.map((mail, key) => {
+							if (mail.id !== activeMail.id) {
+								return (
+									<ListItem
+										key={key}
+										role={undefined}
+										dense
+										button
+										onClick={() => this.toggleDependencyCheckbox(mail.id)}
+									>
+										<Checkbox
+											checked={this.state.mailDependencies.indexOf(mail.id) !== -1}
+											tabIndex={-1}
+											disableRipple
+										/>
+										<ListItemText primary={mail.status} />
+									</ListItem>
+								);
+							}
+						})}
 					</List>
 				</Paper>
 			);
@@ -256,6 +256,14 @@ class StoryObject extends Component {
 
 	addStory = () => {
 		const { id, title, text, author, Mails } = this.state;
+		axios
+			.post('/api/story', {
+				title,
+				text,
+				author,
+				_user: this.props.authInformation.user
+			})
+			.then((res) => console.log(res));
 		const story = {
 			id,
 			title,
@@ -319,7 +327,11 @@ class StoryObject extends Component {
 		const { classes, activeStory } = this.props;
 		if (activeStory.title) {
 			return (
-				<Button color="primary" variant="raised" onClick={() => this.updateActiveStoryAndReplaceItInStoryArray(activeStory)}>
+				<Button
+					color="primary"
+					variant="raised"
+					onClick={() => this.updateActiveStoryAndReplaceItInStoryArray(activeStory)}
+				>
 					Save Changes
 				</Button>
 			);
@@ -458,23 +470,25 @@ class StoryObject extends Component {
 					>
 						<Grid item sm={12}>
 							<div tabIndex={0} role="button" className={classes.list}>
-								<MenuList subheader={
-									<Fragment>
-										<ListSubheader>
-											<Typography variant="headline" color="inherit" noWrap align="center">
-												Mails
-											</Typography>
-										</ListSubheader>
-										<Divider style={{ marginBottom: "1.5rem" }} />
-									</Fragment>
-								}
-									className={classes.menuList}>{this.renderAvailableMails()}</MenuList>
+								<MenuList
+									subheader={
+										<Fragment>
+											<ListSubheader>
+												<Typography variant="headline" color="inherit" noWrap align="center">
+													Mails
+												</Typography>
+											</ListSubheader>
+											<Divider style={{ marginBottom: '1.5rem' }} />
+										</Fragment>
+									}
+									className={classes.menuList}
+								>
+									{this.renderAvailableMails()}
+								</MenuList>
 							</div>
 						</Grid>
 						<Grid item sm={12}>
-							<div className={classes.activeMailDetails} >
-								{this.renderActiveMailDetails()}
-							</div>
+							<div className={classes.activeMailDetails}>{this.renderActiveMailDetails()}</div>
 						</Grid>
 					</Grid>
 				</Drawer>
@@ -483,11 +497,12 @@ class StoryObject extends Component {
 	}
 }
 
-const mapStateToProps = ({ emailObjects, storyArray, activeMail, activeStory }) => ({
+const mapStateToProps = ({ emailObjects, storyArray, activeMail, activeStory, authInformation }) => ({
 	emailObjects,
 	storyArray,
 	activeMail,
-	activeStory
+	activeStory,
+	authInformation
 });
 
 export default connect(mapStateToProps, actions)(withStyles(styles)(StoryObject));

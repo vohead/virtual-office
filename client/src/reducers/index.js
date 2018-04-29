@@ -11,5 +11,5 @@ export default combineReducers({
 	storyArray: storyObjectReducer,
 	activeStory: activeStoryReducer,
 	activeMail: activeMailReducer,
-	authInformation: authReducer
+	auth: authReducer
 });
