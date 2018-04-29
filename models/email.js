@@ -5,7 +5,12 @@ const EmailSchema = new Schema({
 	title: String,
 	author: String,
 	text: String,
-	timer: Number
+	timer: Number,
+	_user: { type: Schema.Types.ObjectId, ref: 'User' }
+
 });
 
-module.exports = EmailSchema;
+const model = mongoose.model('email', EmailSchema);
+
+
+module.exports = model;

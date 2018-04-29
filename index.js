@@ -7,14 +7,17 @@ const passport = require('passport');
 const app = express();
 const router = require('./router');
 const keys = require('./keys');
-require('./models/user');
-require('./models/email');
-require('./models/story');
+
 
 mongoose.connect(keys.dbUrl);
 mongoose.Promise = global.Promise;
 
+require('./models/user');
+require('./models/email');
+require('./models/story');
+
 // App Setup
+
 app.use(
 	cookieSession({
 		maxAge: 30 * 24 * 60 * 60 * 1000,

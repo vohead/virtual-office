@@ -70,6 +70,7 @@ class EmailObject extends Component {
   }
 
   componentDidMount = () => {
+    this.props.FetchEmails();
     this.setState({
       status: status.IN_PROGRESS
     });
@@ -89,16 +90,27 @@ class EmailObject extends Component {
 
   saveChanges = () => {
     const emails = [...this.props.emailObjects];
+    const { title, text, author, timer } = this.state;
 
-    emails.forEach(email => {
-      if (email.id === this.props.activeMail.id) {
-        email.title = this.state.title;
-        email.text = this.state.text;
-        email.author = this.state.author;
-        email.timer = this.state.timer;
-      }
-    });
-    this.props.SetEmailObjects(emails);
+    // emails.forEach(email => {
+    //   if (email.id === this.props.activeMail.id) {
+    //     email.title = this.state.title;
+    //     email.text = this.state.text;
+    //     email.author = this.state.author;
+    //     email.timer = this.state.timer;
+    //   }
+    // });
+    // this.props.SetEmailObjects(emails);
+    const updateValues = {
+      id: this.props.activeMail._id,
+      title,
+      text,
+      author,
+      timer,
+    }
+    console.log(updateValues)
+    this.props.UpdateMail(updateValues);
+    
     this.setState({
       showAdd: true,
       title: "",
@@ -109,7 +121,7 @@ class EmailObject extends Component {
   };
 
   handleSubmit = e => {
-    const { title, text, author, timer, dependencies } = this.state;
+    const { title, text, author, timer } = this.state;
 
     const emailObject = {
       id: this.state.id,
@@ -117,68 +129,67 @@ class EmailObject extends Component {
       text,
       author,
       timer,
-      status: status.NOT_STARTED,
-      dependencies
+      status: status.NOT_STARTED
     };
-    this.props.AddEmailObject(emailObject);
+    this.props.SaveMail(emailObject);
     this.setState({
       id: this.state.id + 1
     });
   };
 
   activateMail = email => {
-    const { title, text, author, timer, dependencies } = email;
+    const { title, text, author, timer } = email;
     this.props.SetActiveMail(email);
-
+    
     this.setState({
       title,
       text,
       author,
       timer,
-      dependencies,
       showAdd: false,
       activeMenuItem: email.id
     });
   };
-
+  
   renderListe = () => {
     const { classes } = this.props;
     return this.props.emailObjects.map((email, key) => {
       return (
         <MenuItem
-          className={classes.menuItem}
-          selected={this.state.activeMenuItem === email.id}
-          key={key}
-          onClick={() => this.activateMail(email)}
+        className={classes.menuItem}
+        selected={this.state.activeMenuItem === email.id}
+        key={key}
+        onClick={() => this.activateMail(email)}
         >
           <ListItemText primary={email.title} />
         </MenuItem>
       );
     });
   };
-
+  
   deleteActiveMail = () => {
     this.props.DeleteEmailObject(this.props.activeMail);
   };
-
+  
   clearComponentStateAndForm = () => {
-		this.setState({
-			title: '',
+    this.setState({
+      title: '',
 			author: '',
 			text: '',
 			showAdd: true
 		});
-
+    
 		this.props.SetActiveMail({});
-	};
-
+  };
+  
+  
   render() {
     const { classes, activeMail } = this.props;
     return (
       <MuiShowcase
-        subheader="My Mails"
-        heading="Define a Mail Object..."
-        list={this.renderListe()}
+      subheader="My Mails"
+      heading="Define a Mail Object..."
+      list={this.renderListe()}
       >
         <Grid container className={classes.container}>
           <Grid item sm={12}>
@@ -190,7 +201,7 @@ class EmailObject extends Component {
               onChange={e => this.handleChange("title", e)}
               className={classes.textField}
               margin="normal"
-            />
+              />
           </Grid>
           <Grid item sm={12}>
             <TextField
@@ -201,7 +212,7 @@ class EmailObject extends Component {
               onChange={e => this.handleChange("text", e)}
               className={classes.textField}
               margin="normal"
-            />
+              />
           </Grid>
           <Grid item sm={12}>
             <TextField

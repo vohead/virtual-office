@@ -1,5 +1,6 @@
 const AuthenticationController = require('./controllers/authentication');
 const StoryController = require('./controllers/story');
+const EmailController = require('./controllers/email');
 const passportService = require('./passport');
 const passport = require('passport');
 
@@ -12,4 +13,8 @@ module.exports = (app) => {
 
 	app.post('/api/story', StoryController.save);
 	app.get('/api/stories', StoryController.findStoriesFromUser);
+
+	app.post('/api/email', EmailController.save);
+	app.post('/api/email/update', EmailController.update);
+	app.get('/api/emails', EmailController.findEmailsFromUser);
 };

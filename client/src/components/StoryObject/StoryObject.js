@@ -261,7 +261,6 @@ componentDidMount = () => {
 				title,
 				text,
 				author,
-				_user: this.props.authInformation.user
 			})
 			.then((res) => console.log(res));
 		const story = {
