@@ -4,7 +4,7 @@
 node_modules
 
 access and config keys
-keys.js
+dev.js
 
 # testing
 /coverage

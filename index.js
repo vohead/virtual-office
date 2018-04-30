@@ -6,8 +6,7 @@ const cookieSession = require('cookie-session');
 const passport = require('passport');
 const app = express();
 const router = require('./router');
-const keys = require('./keys');
-
+const keys = require('./config/keys');
 
 mongoose.connect(keys.dbUrl);
 mongoose.Promise = global.Promise;
