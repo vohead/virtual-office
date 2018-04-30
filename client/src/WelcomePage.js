@@ -15,7 +15,7 @@ const styles = (theme) => ({
 		margin: theme.spacing.unit
 	},
 	withoutLabel: {
-		marginTop: theme.spacing.unit * 3
+		marginTop: theme.spacing.unit
 	},
 	textField: {
 		flexBasis: 200
@@ -67,12 +67,12 @@ class WelcomePage extends Component {
 					<Typography variant="display3">Virtual Office</Typography>
 				</Grid>
 				<Grid item>
-					<FormControl>
+					<FormControl className={classes.textField}>
+						<InputLabel htmlFor="username">Username</InputLabel>
 						<Input
-							id="adornment-weight"
-							value={this.state.weight}
+							id="username"
+							value={this.state.username}
 							onChange={(e) => this.handleChange('username', e)}
-							className={classes.textField}
 							inputProps={{
 								'aria-label': 'username'
 							}}
@@ -81,9 +81,9 @@ class WelcomePage extends Component {
 				</Grid>
 				<Grid item>
 					<FormControl className={classes.textField}>
-						<InputLabel htmlFor="adornment-password">Password</InputLabel>
+						<InputLabel htmlFor="password">Password</InputLabel>
 						<Input
-							id="adornment-password"
+							id="password"
 							type={this.state.showPassword ? 'text' : 'password'}
 							value={this.state.password}
 							onChange={(e) => this.handleChange('password', e)}

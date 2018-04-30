@@ -12,9 +12,12 @@ module.exports = (app) => {
 	app.get('/api/logout', AuthenticationController.signout);
 
 	app.post('/api/story', StoryController.save);
+	app.put('/api/story', StoryController.update);
 	app.get('/api/stories', StoryController.findStoriesFromUser);
+	app.delete('/api/story/:id', StoryController.delete);
 
 	app.post('/api/email', EmailController.save);
-	app.post('/api/email/update', EmailController.update);
+	app.put('/api/email', EmailController.update);
 	app.get('/api/emails', EmailController.findEmailsFromUser);
+	app.delete('/api/email/:id', EmailController.delete);
 };

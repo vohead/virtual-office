@@ -135,8 +135,8 @@ class StoryObject extends Component {
 		this.props.SetActiveMail({});
 	};
 
-	addEmailToComponentState = (email) => {
-		this.setState({ Mails: [ ...this.state.Mails, email ] });
+	addEmailToComponentState = () => {
+		this.setState({ emails: [ ...this.state.emails, this.props.activeMail._id ] });
 	};
 
 	activateMailAndSetDependencies = (email) => {
@@ -166,11 +166,19 @@ class StoryObject extends Component {
 	};
 
 	renderStoryMails = () => {
-		const { classes } = this.props;
+		const { classes, emailObjects } = this.props;
 		const { emails } = this.state;
+		let storyMails = [];
 
-		if (emails) {
-			return emails.map((mail, key) => {
+		// eslint-disable-next-line
+		emailObjects.map((email) => {
+			if (emails.indexOf(email._id) !== -1) {
+				storyMails.push(email);
+			}
+		});
+
+		if (storyMails.length > 0) {
+			return storyMails.map((mail, key) => {
 				return (
 					<Card className={classes.card} key={key}>
 						<CardContent>
@@ -254,7 +262,6 @@ class StoryObject extends Component {
 
 	addStory = () => {
 		const { title, text, author, emails } = this.state;
-
 		const story = {
 			title,
 			author,
@@ -305,12 +312,27 @@ class StoryObject extends Component {
 		});
 	};
 
-	updateActiveStoryAndReplaceItInStoryArray = (activeStory) => {
-		const { storyArray } = this.props;
-		const newArray = this.findActiveStoryAndUpdateValues(storyArray, activeStory);
-		this.props.SetStoryObjects(newArray);
+	updateStory = () => {
+		const { UpdateStory } = this.props;
+		const { title, text, author, emails } = this.state;
+
+		const storyValues = {
+			id: this.props.activeStory._id,
+			title,
+			text,
+			author,
+			emails
+		};
+
+		UpdateStory(storyValues);
+
+		this.props.SetActiveStory({});
+
 		this.setState({
-			saveMessage: 'Changes applied',
+			text: '',
+			title: '',
+			author: '',
+			emails: [],
 			saveSuccess: true
 		});
 	};
@@ -319,11 +341,7 @@ class StoryObject extends Component {
 		const { classes, activeStory } = this.props;
 		if (activeStory.title) {
 			return (
-				<Button
-					color="primary"
-					variant="raised"
-					onClick={() => this.updateActiveStoryAndReplaceItInStoryArray(activeStory)}
-				>
+				<Button color="primary" variant="raised" onClick={() => this.updateStory()}>
 					Save Changes
 				</Button>
 			);
@@ -336,7 +354,7 @@ class StoryObject extends Component {
 	};
 
 	deleteActiveStory = () => {
-		this.props.DeleteStoryObject(this.props.activeStory);
+		this.props.DeleteStory(this.props.activeStory);
 		this.clearComponentStateAndForm();
 		this.setState({ saveSuccess: true, saveMessage: 'successfully deleted' });
 	};
@@ -403,14 +421,16 @@ class StoryObject extends Component {
 									Cancel Editing
 								</Button>
 							)}
-							<Button
-								variant="raised"
-								color="secondary"
-								className={classes.button}
-								onClick={this.deleteActiveStory}
-							>
-								Delete Story
-							</Button>
+							{this.state.title.length > 0 && (
+								<Button
+									variant="raised"
+									color="secondary"
+									className={classes.button}
+									onClick={this.deleteActiveStory}
+								>
+									Delete Story
+								</Button>
+							)}
 						</Grid>
 					</Grid>
 					<Grid item sm={12}>

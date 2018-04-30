@@ -77,8 +77,16 @@ exports.update = (req, res, next) => {
 			if (err) {
 				return next(err);
 			}
-			console.log(result);
 			res.json(result);
 		}
 	);
+};
+
+exports.delete = (req, res, next) => {
+	if (!req.user) {
+		return res.status(401).send({ error: 'Access Denied' });
+	}
+	const id = req.params.id;
+
+	Email.findByIdAndRemove({ _id: id }).then((email) => res.status(204).send(email)).catch(next);
 };

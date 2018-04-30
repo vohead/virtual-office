@@ -43,6 +43,48 @@ exports.findStoriesFromUser = (req, res, next) => {
 	}
 
 	Story.find({ _user: req.user.id }).then((stories) => {
-		res.send(stories)
+		res.send(stories);
 	});
+};
+
+exports.update = (req, res, next) => {
+	const title = req.body.title;
+	const text = req.body.text;
+	const author = req.body.author;
+	const emails = req.body.emails;
+
+	if (!title || !text || !author) {
+		return res.status(422).send({
+			error: 'You can not provide an empty value for the timer, text, title or author field'
+		});
+	}
+
+	if (!req.user) {
+		return res.status(401).send({ error: 'Access Denied' });
+	}
+	Story.findByIdAndUpdate(
+		{ _id: req.body.id },
+		{
+			title: title,
+			text: text,
+			author: author,
+			emails: emails
+		},
+		{ new: true },
+		(err, result) => {
+			if (err) {
+				return next(err);
+			}
+			res.json(result);
+		}
+	);
+};
+
+exports.delete = (req, res, next) => {
+	if (!req.user) {
+		return res.status(401).send({ error: 'Access Denied' });
+	}
+	const id = req.params.id;
+
+	Story.findByIdAndRemove({ _id: id }).then((story) => res.status(204).send(story)).catch(next);
 };

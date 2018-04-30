@@ -1,16 +1,17 @@
-import { DELETEEMAILOBJECT, FETCHEMAILS, SAVEMAIL, UPDATEMAIL } from '../actions';
+import { DELETEMAIL, FETCHEMAILS, SAVEMAIL, UPDATEMAIL } from '../actions';
 
 export default (state = [], action) => {
 	switch (action.type) {
-		case DELETEEMAILOBJECT:
+		case DELETEMAIL:
 			const currentState = [ ...state ];
 			const newState = [];
 			// eslint-disable-next-line
 			currentState.map((story, index) => {
-				if (story.id !== action.payload.id) {
+				if (story._id !== action.payload) {
 					newState.push(story);
 				}
 			});
+
 			return newState;
 
 		case FETCHEMAILS:
