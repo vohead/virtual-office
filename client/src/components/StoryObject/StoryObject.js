@@ -95,10 +95,6 @@ class StoryObject extends Component {
 		this.props.FetchStories();
 	};
 
-	// componentDidUpdate = () => {
-	// 	this.triggerUpdate();
-	// };
-
 	handleChange = (name, e) => {
 		this.setState({
 			[name]: e.target.value
@@ -158,7 +154,6 @@ class StoryObject extends Component {
 
 	renderAvailableMails = () => {
 		const { classes, emailObjects } = this.props;
-		console.log(emailObjects);
 		if (emailObjects.length > 0) {
 			return emailObjects.map((email, key) => {
 				return (
