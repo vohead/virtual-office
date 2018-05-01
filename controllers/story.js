@@ -6,7 +6,7 @@ exports.save = (req, res, next) => {
 	const author = req.body.author;
 	const emails = req.body.emails;
 	const user = req.user.id;
-
+	console.log(req.body);
 	if (!req.user) {
 		return res.status(401).send({ error: 'Access Denied' });
 	}
@@ -30,7 +30,6 @@ exports.save = (req, res, next) => {
 		});
 		story.save((err) => {
 			if (err) {
-				console.log(story);
 				return next(err);
 			}
 			res.json(story);

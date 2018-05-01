@@ -110,7 +110,6 @@ class StoryObject extends Component {
 			emails: story.emails,
 			activeMenuItem: story.id
 		});
-		console.log(story)
 	};
 
 	renderStoryList = () => {
@@ -142,7 +141,7 @@ class StoryObject extends Component {
 	addEmailToComponentState = () => {
 		const { activeMail } = this.props;
 		this.setState({
-			emails: [ ...this.state.emails, { id: activeMail._id, dependencies: activeMail.dependencies } ]
+			emails: [ ...this.state.emails, activeMail._id ]
 		});
 	};
 
@@ -194,15 +193,14 @@ class StoryObject extends Component {
 		const { emails } = this.state;
 		let storyMails = [];
 
+		console.log(emails);
 		// eslint-disable-next-line
-		console.log("Wir sind die Emails aus dem State:" , this.state)
 		emailObjects.map((email) => {
 			if (emails.indexOf(email._id) !== -1) {
-				console.log("im if")
+				console.log('email', email);
 				storyMails.push(email);
 			}
 		});
-		console.log(storyMails)
 
 		if (storyMails.length > 0) {
 			return storyMails.map((mail, key) => {
@@ -283,14 +281,14 @@ class StoryObject extends Component {
 					<Typography gutterBottom variant="body2">
 						Written by {activeMail.author}
 					</Typography>
-					<Button variant="raised" onClick={() => this.addEmailToComponentState(activeMail)}>
+					<Button variant="raised" onClick={this.addEmailToComponentState}>
 						Add to story
 					</Button>
 
 					<List style={{ width: '100%' }}>
 						{// eslint-disable-next-line
 						emails.map((mail, key) => {
-							if (mail.id !== activeMail.id) {
+							if (mail && mail._id !== activeMail._id) {
 								return (
 									<ListItem
 										key={key}

@@ -4,7 +4,7 @@ import * as actions from '../../actions';
 import { connect } from 'react-redux';
 import MuiShowcase from '../../MuiShowcase';
 import { ListItemText, MenuItem, Grid, TextField, Button } from 'material-ui';
-import { Delete, FileUpload, Send, NotInterested, Save } from '@material-ui/icons';
+import { Delete, FileUpload, NotInterested, Save } from '@material-ui/icons';
 import { withStyles } from 'material-ui/styles';
 import { blueGrey } from 'material-ui/colors';
 

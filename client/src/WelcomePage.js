@@ -32,8 +32,8 @@ class WelcomePage extends Component {
 		super(props);
 
 		this.state = {
-			username: null,
-			password: null,
+			username: '',
+			password: '',
 			showPassword: false
 		};
 	}
@@ -65,7 +65,7 @@ class WelcomePage extends Component {
 		return (
 			<Grid container alignItems="stretch" justify="center" direction="column" className={classes.container}>
 				<Grid item>
-					<Typography variant="display3">Virtual Office</Typography>
+					<Typography align="center" variant="display3">Virtual Office</Typography>
 				</Grid>
 				<Grid item>
 					<FormControl className={classes.textField}>
