@@ -10,7 +10,7 @@ const StorySchema = new Schema({
   },
   author: String,
   text: String,
-  emails: [{ id: {type: Schema.Types.ObjectId, ref: "email"}, dependencies: [Number] }],
+  emails: [ {type: Schema.Types.ObjectId, ref: "email", dependencies: [Number] }],
   _user: { type: Schema.Types.ObjectId, ref: "User" }
 });
 
