@@ -6,6 +6,7 @@ import { Button, Divider, ListSubheader, MenuList, Drawer, AppBar, Toolbar, Typo
 import { Link } from 'react-router-dom';
 import * as actions from './actions';
 import menuBackground from './pictures/office-menu-background.jpg';
+import SaveIndicator from './components/utility/SaveIndicator';
 
 const drawerWidth = 240;
 
@@ -17,6 +18,10 @@ const styles = (theme) => ({
 		overflow: 'hidden',
 		position: 'relative',
 		display: 'flex'
+	},
+	row: {
+		display: 'flex',
+		width: '70%'
 	},
 	appBar: {
 		zIndex: theme.zIndex.drawer + 1
@@ -109,7 +114,10 @@ function MuiShowcase(props) {
 			</Drawer>
 			<main className={classes.content}>
 				<div className={classes.toolbar} />
-				<Typography variant="display2">{props.heading}</Typography>
+				<Grid container justify="space-between" className={classes.row}>
+					<Typography variant="display2">{props.heading}</Typography>
+					<SaveIndicator checked={props.checked} />
+				</Grid>
 				{props.children}
 			</main>
 		</div>
@@ -119,7 +127,5 @@ function MuiShowcase(props) {
 MuiShowcase.propTypes = {
 	classes: PropTypes.object.isRequired
 };
-
-
 
 export default connect(null, actions)(withStyles(styles)(MuiShowcase));

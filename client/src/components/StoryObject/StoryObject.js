@@ -21,6 +21,7 @@ import {
 	Divider,
 	Paper
 } from 'material-ui';
+import { Delete, FileUpload, Send, NotInterested, Save } from '@material-ui/icons';
 import { withStyles } from 'material-ui/styles';
 import { blueGrey } from 'material-ui/colors';
 
@@ -50,8 +51,12 @@ const styles = (theme) => ({
 		width: '100%'
 	},
 	paper: {
-		width: '35%'
+		width: '35%',
+		padding: '1rem'
 	},
+  rightIcon: {
+    marginLeft: theme.spacing.unit,
+  },
 	menuItem: {
 		background: blueGrey[200],
 		borderRadius: '.2rem',
@@ -81,15 +86,18 @@ class StoryObject extends Component {
 			author: '',
 			emails: [],
 			mailDependencies: [],
-			saveSuccess: false,
-			saveMessage: 'Save successful',
-			activeMenuItem: null
+			activeMenuItem: null,
+			checked: false
 		};
 	}
 
 	componentDidMount = () => {
 		this.props.FetchStories();
 	};
+
+	// componentDidUpdate = () => {
+	// 	this.triggerUpdate();
+	// };
 
 	handleChange = (name, e) => {
 		this.setState({
@@ -104,7 +112,6 @@ class StoryObject extends Component {
 			author: story.author,
 			text: story.text,
 			emails: story.emails,
-			saveSuccess: false,
 			activeMenuItem: story.id
 		});
 	};
@@ -165,6 +172,23 @@ class StoryObject extends Component {
 		return <p>LALALA</p>;
 	};
 
+	showMailDetails = (mail) => {
+		this.props.SetActiveMail(mail);
+		this.setState({ right: true });
+	};
+
+	removeFromStateAndUpdateStory = (mail) => {
+		const emails = [ ...this.state.emails ];
+		let emailsWithoutMail = [];
+		// eslint-disable-next-line
+		emails.map((email) => {
+			if (email !== mail._id) {
+				emailsWithoutMail.push(email);
+			}
+		});
+		this.setState({ emails: emailsWithoutMail }, this.updateStory);
+	};
+
 	renderStoryMails = () => {
 		const { classes, emailObjects } = this.props;
 		const { emails } = this.state;
@@ -182,16 +206,31 @@ class StoryObject extends Component {
 				return (
 					<Card className={classes.card} key={key}>
 						<CardContent>
-							<Typography align="right" variant="display2">
+							<Typography variant="title" gutterBottom noWrap>
 								{mail.title}
 							</Typography>
-							<Typography component="p">
-								Author:<br />
+							<Typography component="p" noWrap>
+								<strong>Author: </strong>
 								{mail.author}
+							</Typography>
+							<Typography component="p">
+								<strong>Time to finish: </strong>
+								{mail.timer}
 							</Typography>
 						</CardContent>
 						<CardActions>
-							<Button size="small">Learn More</Button>
+							<Grid container justify="space-between">
+								<Button size="small" onClick={() => this.showMailDetails(mail)}>
+									Details
+								</Button>
+								<Button
+									color="secondary"
+									size="small"
+									onClick={() => this.removeFromStateAndUpdateStory(mail)}
+								>
+									remove
+								</Button>
+							</Grid>
 						</CardActions>
 					</Card>
 				);
@@ -224,13 +263,24 @@ class StoryObject extends Component {
 		if (activeMail.title) {
 			return (
 				<Paper className={classes.activeMailDetails}>
-					<Typography variant="headline" color="inherit" noWrap align="left">
+					<Typography gutterBottom variant="headline" color="inherit" noWrap align="left">
 						Details:
 					</Typography>
-					<p>{activeMail.title}</p>
-					<p>{activeMail.author}</p>
-					<p>{activeMail.timer}</p>
-					<button onClick={() => this.addEmailToComponentState(activeMail)}>Add to story</button>
+					<Typography gutterBottom variant="title">
+						{activeMail.title}
+					</Typography>
+					<Typography gutterBottom variant="subheading" style={{ marginBottom: '2rem' }}>
+						{activeMail.text}
+					</Typography>
+					<Typography gutterBottom variant="body2">
+						Time to finish: {activeMail.timer}
+					</Typography>
+					<Typography gutterBottom variant="body2">
+						Written by {activeMail.author}
+					</Typography>
+					<Button variant="raised" onClick={() => this.addEmailToComponentState(activeMail)}>
+						Add to story
+					</Button>
 
 					<List style={{ width: '100%' }}>
 						{// eslint-disable-next-line
@@ -268,18 +318,25 @@ class StoryObject extends Component {
 			text,
 			emails
 		};
+		if (title && author && text) {
+			this.props.SaveStory(story);
 
-		this.props.SaveStory(story);
+			this.props.SetActiveStory({});
 
-		this.props.SetActiveStory({});
+			this.setState({
+				text: '',
+				title: '',
+				author: '',
+				emails: [],
+				checked: true
+			});
+		} else {
+			alert('set some values, bitch');
+		}
 
-		this.setState({
-			text: '',
-			title: '',
-			author: '',
-			emails: [],
-			saveSuccess: true
-		});
+		setTimeout(() => {
+			this.setState({ checked: false });
+		}, 2000);
 	};
 
 	clearComponentStateAndForm = () => {
@@ -287,8 +344,7 @@ class StoryObject extends Component {
 			title: '',
 			author: '',
 			text: '',
-			emails: [],
-			saveSuccess: false
+			emails: []
 		});
 
 		this.props.SetActiveStory({});
@@ -312,11 +368,11 @@ class StoryObject extends Component {
 		});
 	};
 
-	updateStory = () => {
+	updateStory = (reset) => {
 		const { UpdateStory } = this.props;
-		const { title, text, author, emails } = this.state;
+		let { title, text, author, emails } = this.state;
 
-		const storyValues = {
+		let storyValues = {
 			id: this.props.activeStory._id,
 			title,
 			text,
@@ -325,16 +381,16 @@ class StoryObject extends Component {
 		};
 
 		UpdateStory(storyValues);
+		if (reset) {
+			this.props.SetActiveStory({});
 
-		this.props.SetActiveStory({});
-
-		this.setState({
-			text: '',
-			title: '',
-			author: '',
-			emails: [],
-			saveSuccess: true
-		});
+			this.setState({
+				text: '',
+				title: '',
+				author: '',
+				emails: []
+			});
+		}
 	};
 
 	evaluateActiveStoryObjectToRenderCorrectButton = () => {
@@ -342,13 +398,15 @@ class StoryObject extends Component {
 		if (activeStory.title) {
 			return (
 				<Button color="primary" variant="raised" onClick={() => this.updateStory()}>
-					Save Changes
+					Update
+					<FileUpload className={classes.rightIcon} />
 				</Button>
 			);
 		}
 		return (
 			<Button variant="raised" color="primary" onClick={this.addStory} className={classes.button}>
 				Save Story
+				<Save className={classes.rightIcon} />
 			</Button>
 		);
 	};
@@ -356,105 +414,88 @@ class StoryObject extends Component {
 	deleteActiveStory = () => {
 		this.props.DeleteStory(this.props.activeStory);
 		this.clearComponentStateAndForm();
-		this.setState({ saveSuccess: true, saveMessage: 'successfully deleted' });
 	};
 
-	evaluateSaveSuccessFromState = () => {
+	renderContent = () => {
 		const { classes, activeStory } = this.props;
 
-		if (!this.state.saveSuccess) {
-			return (
-				<Grid container className={classes.container}>
-					<Grid item sm={12}>
-						<TextField
-							required
-							id="required"
-							label="Title"
-							value={this.state.title}
-							onChange={(e) => this.handleChange('title', e)}
-							className={classes.textField}
-							margin="normal"
-						/>
-					</Grid>
-					<Grid item sm={12}>
-						<TextField
-							required
-							id="required"
-							label="Author"
-							value={this.state.author}
-							onChange={(e) => this.handleChange('author', e)}
-							className={classes.textField}
-							margin="normal"
-						/>
-					</Grid>
-					<Grid item sm={12}>
-						<TextField
-							label="Text"
-							multiline
-							rowsMax="4"
-							value={this.state.text}
-							onChange={(e) => this.handleChange('text', e)}
-							className={classes.textField}
-							margin="normal"
-						/>
-					</Grid>
-					<Grid item sm={6}>
-						<Button
-							onClick={this.toggleMailDrawer}
-							variant="raised"
-							color="primary"
-							aria-label="add"
-							className={classes.button}
-						>
-							Add Mail
-						</Button>
-						{this.evaluateActiveStoryObjectToRenderCorrectButton()}
-					</Grid>
-					<Grid item sm={6}>
-						<Grid container justify="flex-end">
-							{activeStory.title && (
-								<Button
-									variant="raised"
-									className={classes.button}
-									onClick={this.clearComponentStateAndForm}
-								>
-									Cancel Editing
-								</Button>
-							)}
-							{this.state.title.length > 0 && (
-								<Button
-									variant="raised"
-									color="secondary"
-									className={classes.button}
-									onClick={this.deleteActiveStory}
-								>
-									Delete Story
-								</Button>
-							)}
-						</Grid>
-					</Grid>
-					<Grid item sm={12}>
-						<Grid container spacing={8}>
-							{this.renderStoryMails()}
-						</Grid>
-					</Grid>
-				</Grid>
-			);
-		}
 		return (
-			<Grid container>
-				<Grid item sm={12} lg={6}>
-					<Typography variant="headline" component="h2">
-						{this.state.saveMessage}
-					</Typography>
+			<Grid container className={classes.container}>
+				<Grid item sm={12}>
+					<TextField
+						required
+						id="required"
+						label="Title"
+						value={this.state.title}
+						onChange={(e) => this.handleChange('title', e)}
+						className={classes.textField}
+						margin="normal"
+					/>
+				</Grid>
+				<Grid item sm={12}>
+					<TextField
+						required
+						id="required"
+						label="Author"
+						value={this.state.author}
+						onChange={(e) => this.handleChange('author', e)}
+						className={classes.textField}
+						margin="normal"
+					/>
+				</Grid>
+				<Grid item sm={12}>
+					<TextField
+						label="Text"
+						multiline
+						rowsMax="4"
+						value={this.state.text}
+						onChange={(e) => this.handleChange('text', e)}
+						className={classes.textField}
+						margin="normal"
+					/>
+				</Grid>
+				<Grid item sm={6}>
 					<Button
+						onClick={this.toggleMailDrawer}
 						variant="raised"
 						color="primary"
-						onClick={this.clearComponentStateAndForm}
+						aria-label="add"
 						className={classes.button}
 					>
-						Add more Stories
+						Add Mail
+						<Send className={classes.rightIcon} />
 					</Button>
+					{this.evaluateActiveStoryObjectToRenderCorrectButton()}
+				</Grid>
+				<Grid item sm={6}>
+					<Grid container justify="flex-end">
+						{activeStory.title && (
+							<Button
+								variant="raised"
+								className={classes.button}
+								onClick={this.clearComponentStateAndForm}
+							>
+								Cancel Editing
+								<NotInterested className={classes.rightIcon} />
+							</Button>
+						)}
+						{this.state.title.length > 0 && (
+							<Button
+								variant="raised"
+								color="secondary"
+								className={classes.button}
+								onClick={this.deleteActiveStory}
+							>
+								Delete Story
+								<Delete className={classes.rightIcon} />
+							</Button>
+						)}
+					</Grid>
+				</Grid>
+				<Grid item sm={12}>
+					<Grid container spacing={8}>
+						{this.renderStoryMails()}
+					</Grid>
 				</Grid>
 			</Grid>
 		);
@@ -463,8 +504,13 @@ class StoryObject extends Component {
 	render() {
 		const { classes } = this.props;
 		return (
-			<MuiShowcase subheader="My Stories" heading="Compose a story..." list={this.renderStoryList()}>
-				{this.evaluateSaveSuccessFromState()}
+			<MuiShowcase
+				subheader="My Stories"
+				checked={this.state.checked}
+				heading="Compose a story..."
+				list={this.renderStoryList()}
+			>
+				{this.renderContent()}
 				<Drawer
 					anchor="right"
 					open={this.state.right}

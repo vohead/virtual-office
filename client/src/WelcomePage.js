@@ -18,9 +18,10 @@ const styles = (theme) => ({
 		marginTop: theme.spacing.unit
 	},
 	textField: {
-		flexBasis: 200
+		width: '100%'
 	},
 	container: {
+		width: '20%',
 		margin: '0 auto',
 		height: '100%'
 	}
@@ -62,7 +63,7 @@ class WelcomePage extends Component {
 			return <Redirect to="/mails" />;
 		}
 		return (
-			<Grid container alignItems="center" justify="center" direction="column" className={classes.container}>
+			<Grid container alignItems="stretch" justify="center" direction="column" className={classes.container}>
 				<Grid item>
 					<Typography variant="display3">Virtual Office</Typography>
 				</Grid>
@@ -79,7 +80,7 @@ class WelcomePage extends Component {
 						/>
 					</FormControl>
 				</Grid>
-				<Grid item>
+				<Grid item style={{marginTop: '.5rem'}}>
 					<FormControl className={classes.textField}>
 						<InputLabel htmlFor="password">Password</InputLabel>
 						<Input
@@ -101,10 +102,12 @@ class WelcomePage extends Component {
 						/>
 					</FormControl>
 				</Grid>
-				<Grid item>
+				<Grid item align="center" style={{marginTop: '1rem'}}>
 					<Button variant="raised" color="primary" onClick={this.login}>
 						Login
 					</Button>
+				</Grid>
+				<Grid item>
 				</Grid>
 			</Grid>
 		);

@@ -43,7 +43,8 @@ class EmailObject extends Component {
 			id: 0,
 			timer: 0,
 			showAdd: true,
-			activeMenuItem: null
+			activeMenuItem: null,
+			checked: false
 		};
 	}
 
@@ -95,10 +96,8 @@ class EmailObject extends Component {
 		};
 
 		this.props.SaveMail(emailObject);
-
-		this.setState({
-			id: this.state.id + 1
-		});
+		this.setState({ checked: true });
+		setTimeout(() => {this.setState({ checked: false })}, 2000);
 	};
 
 	activateMail = (email) => {
@@ -144,12 +143,18 @@ class EmailObject extends Component {
 		});
 
 		this.props.SetActiveMail({});
+
 	};
 
 	render() {
 		const { classes, activeMail } = this.props;
 		return (
-			<MuiShowcase subheader="My Mails" heading="Define a Mail Object..." list={this.renderListe()}>
+			<MuiShowcase
+				subheader="My Mails"
+				checked={this.state.checked}
+				heading="Define a Mail Object..."
+				list={this.renderListe()}
+			>
 				<Grid container className={classes.container}>
 					<Grid item sm={12}>
 						<TextField
