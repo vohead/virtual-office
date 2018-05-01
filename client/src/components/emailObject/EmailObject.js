@@ -4,6 +4,7 @@ import * as actions from '../../actions';
 import { connect } from 'react-redux';
 import MuiShowcase from '../../MuiShowcase';
 import { ListItemText, MenuItem, Grid, TextField, Button } from 'material-ui';
+import { Delete, FileUpload, Send, NotInterested, Save } from '@material-ui/icons';
 import { withStyles } from 'material-ui/styles';
 import { blueGrey } from 'material-ui/colors';
 
@@ -27,6 +28,9 @@ const styles = (theme) => ({
 		'&:focus': {
 			backgroundColor: theme.palette.primary.main
 		}
+	},
+	rightIcon: {
+		marginLeft: theme.spacing.unit
 	}
 });
 
@@ -206,6 +210,7 @@ class EmailObject extends Component {
 								onClick={this.handleSubmit}
 							>
 								Save Mail
+								<Save className={classes.rightIcon} />
 							</Button>
 						)}
 						{!this.state.showAdd && (
@@ -216,6 +221,7 @@ class EmailObject extends Component {
 								onClick={this.saveChanges}
 							>
 								Save Changes
+								<FileUpload className={classes.rightIcon} />
 							</Button>
 						)}
 					</Grid>
@@ -228,6 +234,7 @@ class EmailObject extends Component {
 									onClick={this.clearComponentStateAndForm}
 								>
 									Cancel Editing
+									<NotInterested className={classes.rightIcon} />
 								</Button>
 							)}
 							{this.state.title.length > 1 && (
@@ -238,6 +245,7 @@ class EmailObject extends Component {
 									onClick={this.deleteActiveMail}
 								>
 									Delete Mail
+									<Delete className={classes.rightIcon} />
 								</Button>
 							)}
 						</Grid>

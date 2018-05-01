@@ -110,6 +110,7 @@ class StoryObject extends Component {
 			emails: story.emails,
 			activeMenuItem: story.id
 		});
+		console.log(story)
 	};
 
 	renderStoryList = () => {
@@ -194,11 +195,14 @@ class StoryObject extends Component {
 		let storyMails = [];
 
 		// eslint-disable-next-line
+		console.log("Wir sind die Emails aus dem State:" , this.state)
 		emailObjects.map((email) => {
 			if (emails.indexOf(email._id) !== -1) {
+				console.log("im if")
 				storyMails.push(email);
 			}
 		});
+		console.log(storyMails)
 
 		if (storyMails.length > 0) {
 			return storyMails.map((mail, key) => {
