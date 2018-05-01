@@ -54,9 +54,9 @@ const styles = (theme) => ({
 		width: '35%',
 		padding: '1rem'
 	},
-  rightIcon: {
-    marginLeft: theme.spacing.unit,
-  },
+	rightIcon: {
+		marginLeft: theme.spacing.unit
+	},
 	menuItem: {
 		background: blueGrey[200],
 		borderRadius: '.2rem',
@@ -143,18 +143,22 @@ class StoryObject extends Component {
 	};
 
 	addEmailToComponentState = () => {
-		this.setState({ emails: [ ...this.state.emails, this.props.activeMail._id ] });
+		const { activeMail } = this.props;
+		this.setState({
+			emails: [ ...this.state.emails, { id: activeMail._id, dependencies: activeMail.dependencies } ]
+		});
 	};
 
 	activateMailAndSetDependencies = (email) => {
 		this.props.SetActiveMail(email);
 		this.setState({
-			mailDependencies: email.dependencies
+			mailDependencies: this.props.activeMail.dependencies
 		});
 	};
 
 	renderAvailableMails = () => {
 		const { classes, emailObjects } = this.props;
+		console.log(emailObjects);
 		if (emailObjects.length > 0) {
 			return emailObjects.map((email, key) => {
 				return (
@@ -169,7 +173,7 @@ class StoryObject extends Component {
 				);
 			});
 		}
-		return <p>LALALA</p>;
+		return <p>go add some mails</p>;
 	};
 
 	showMailDetails = (mail) => {
@@ -259,10 +263,12 @@ class StoryObject extends Component {
 		const { emails, mailDependencies } = this.state;
 
 		activeMail.dependencies = mailDependencies;
-
 		if (activeMail.title) {
 			return (
 				<Paper className={classes.activeMailDetails}>
+					{activeMail.dependencies.length > 0 && (
+						<Typography variant="display1">{activeMail.dependencies.length}</Typography>
+					)}
 					<Typography gutterBottom variant="headline" color="inherit" noWrap align="left">
 						Details:
 					</Typography>

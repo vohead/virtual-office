@@ -30,6 +30,7 @@ exports.save = (req, res, next) => {
 		});
 		story.save((err) => {
 			if (err) {
+				console.log(story);
 				return next(err);
 			}
 			res.json(story);
