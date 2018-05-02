@@ -5,8 +5,9 @@ exports.save = (req, res, next) => {
 	const text = req.body.text;
 	const author = req.body.author;
 	const emails = req.body.emails;
+	const dependencies = req.body.dependencies;
 	const user = req.user.id;
-	console.log(req.body);
+	
 	if (!req.user) {
 		return res.status(401).send({ error: 'Access Denied' });
 	}
@@ -26,7 +27,8 @@ exports.save = (req, res, next) => {
 			author: author,
 			text: text,
 			emails: emails,
-			_user: user
+			_user: user,
+			dependencies: dependencies
 		});
 		story.save((err) => {
 			if (err) {
@@ -52,6 +54,7 @@ exports.update = (req, res, next) => {
 	const text = req.body.text;
 	const author = req.body.author;
 	const emails = req.body.emails;
+	const dependencies = req.body.dependencies;
 
 	if (!title || !text || !author) {
 		return res.status(422).send({
@@ -68,7 +71,8 @@ exports.update = (req, res, next) => {
 			title: title,
 			text: text,
 			author: author,
-			emails: emails
+			emails: emails,
+			dependencies: dependencies
 		},
 		{ new: true },
 		(err, result) => {

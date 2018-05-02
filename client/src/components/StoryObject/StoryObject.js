@@ -85,7 +85,7 @@ class StoryObject extends Component {
 			title: '',
 			author: '',
 			emails: [],
-			mailDependencies: [],
+			dependencies: [],
 			activeMenuItem: null,
 			checked: false
 		};
@@ -108,7 +108,8 @@ class StoryObject extends Component {
 			author: story.author,
 			text: story.text,
 			emails: story.emails,
-			activeMenuItem: story.id
+			activeMenuItem: story.id,
+			dependencies: story.dependencies
 		});
 	};
 
@@ -146,9 +147,10 @@ class StoryObject extends Component {
 	};
 
 	activateMailAndSetDependencies = (email) => {
-		this.props.SetActiveMail(email);
+		const { activeMail, SetActiveMail } = this.props;
+		SetActiveMail(email);
 		this.setState({
-			mailDependencies: this.props.activeMail.dependencies
+			dependencies: { emailID: activeMail._id, emailDependencies: activeMail.dependencies }
 		});
 	};
 
@@ -193,11 +195,9 @@ class StoryObject extends Component {
 		const { emails } = this.state;
 		let storyMails = [];
 
-		console.log(emails);
 		// eslint-disable-next-line
 		emailObjects.map((email) => {
 			if (emails.indexOf(email._id) !== -1) {
-				console.log('email', email);
 				storyMails.push(email);
 			}
 		});
@@ -240,9 +240,10 @@ class StoryObject extends Component {
 	};
 
 	toggleDependencyCheckbox = (id) => {
-		const { mailDependencies } = this.state;
-		const currentIndex = mailDependencies.indexOf(id);
-		const newMailDependencies = [ ...mailDependencies ];
+		const { activeMail } = this.props;
+		const { dependencies } = this.state;
+		const currentIndex = dependencies.emailDependencies.indexOf(id);
+		const newMailDependencies = [ ...dependencies.emailDependencies ];
 
 		if (currentIndex === -1) {
 			newMailDependencies.push(id);
@@ -251,15 +252,17 @@ class StoryObject extends Component {
 		}
 
 		this.setState({
-			mailDependencies: newMailDependencies
+			dependencies: { emailID: activeMail._id, emailDependencies: newMailDependencies }
 		});
 	};
 
 	renderActiveMailDetails = () => {
 		const { activeMail, classes } = this.props;
-		const { emails, mailDependencies } = this.state;
+		const { emails, dependencies } = this.state;
 
-		activeMail.dependencies = mailDependencies;
+		activeMail.dependencies = dependencies.emailDependencies;
+		console.log(activeMail);
+		console.log('deps', dependencies.emailDependencies);
 		if (activeMail.title) {
 			return (
 				<Paper className={classes.activeMailDetails}>
@@ -314,12 +317,14 @@ class StoryObject extends Component {
 	};
 
 	addStory = () => {
-		const { title, text, author, emails } = this.state;
+		const { title, text, author, emails, dependencies } = this.state;
+
 		const story = {
 			title,
 			author,
 			text,
-			emails
+			emails,
+			dependencies
 		};
 		if (title && author && text) {
 			this.props.SaveStory(story);
@@ -331,7 +336,8 @@ class StoryObject extends Component {
 				title: '',
 				author: '',
 				emails: [],
-				checked: true
+				checked: true,
+				dependencies: []
 			});
 		} else {
 			alert('set some values, bitch');
@@ -347,7 +353,8 @@ class StoryObject extends Component {
 			title: '',
 			author: '',
 			text: '',
-			emails: []
+			emails: [],
+			dependencies: []
 		});
 
 		this.props.SetActiveStory({});
@@ -372,7 +379,7 @@ class StoryObject extends Component {
 	};
 
 	updateStory = (reset) => {
-		const { UpdateStory } = this.props;
+		const { UpdateStory, activeMail } = this.props;
 		let { title, text, author, emails } = this.state;
 
 		let storyValues = {
@@ -380,7 +387,8 @@ class StoryObject extends Component {
 			title,
 			text,
 			author,
-			emails
+			emails,
+			dependencies: [ { emailID: activeMail._id, emailDependencies: [ 12345, 67890 ] } ]
 		};
 
 		UpdateStory(storyValues);
@@ -391,7 +399,8 @@ class StoryObject extends Component {
 				text: '',
 				title: '',
 				author: '',
-				emails: []
+				emails: [],
+				dependencies: []
 			});
 		}
 	};
@@ -505,6 +514,7 @@ class StoryObject extends Component {
 	};
 
 	render() {
+		console.log(this.props);
 		const { classes } = this.props;
 		return (
 			<MuiShowcase
