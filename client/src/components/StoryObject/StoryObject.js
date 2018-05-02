@@ -85,7 +85,7 @@ class StoryObject extends Component {
 			title: '',
 			author: '',
 			emails: [],
-			dependencies: { emailID: 0, emailDependencies: [] },
+			dependencies: [ { emailID: 0, emailDependencies: [] } ],
 			activeMenuItem: null,
 			checked: false
 		};
@@ -108,7 +108,8 @@ class StoryObject extends Component {
 			author: story.author,
 			text: story.text,
 			emails: story.emails,
-			activeMenuItem: story.id
+			activeMenuItem: story.id,
+			dependencies: story.dependencies
 		});
 	};
 
@@ -140,17 +141,12 @@ class StoryObject extends Component {
 
 	addEmailToComponentState = () => {
 		const { activeMail } = this.props;
-		this.setState({
-			emails: [ ...this.state.emails, activeMail._id ]
-		});
-	};
-
-	activateMailAndSetDependencies = (email) => {
-		const { activeMail, SetActiveMail } = this.props;
-		SetActiveMail(email);
-		// this.setState({
-		// 	dependencies: { emailID: activeMail._id, emailDependencies: activeMail.dependencies }
-		// });
+		this.setState(
+			{
+				emails: [ ...this.state.emails, activeMail._id ]
+			},
+			this.updateStory
+		);
 	};
 
 	renderAvailableMails = () => {
@@ -162,7 +158,7 @@ class StoryObject extends Component {
 						className={classes.menuItem}
 						selected={this.state.activeMenuItem === email.id}
 						key={key}
-						onClick={() => this.activateMailAndSetDependencies(email)}
+						onClick={() => this.props.SetActiveMail(email)}
 					>
 						<ListItemText primary={email.title} />
 					</MenuItem>
@@ -240,22 +236,62 @@ class StoryObject extends Component {
 
 	toggleDependencyCheckbox = (id) => {
 		const { activeMail } = this.props;
-		const { dependencies: { emailID, emailDependencies } } = this.state;
+		const emailDependencies = this.checkIfDependencyOfSelectedMail(id) || [];
 		const currentIndex = emailDependencies.indexOf(id);
-		const newMailDependencies = [ ...emailDependencies ];
 
 		if (currentIndex === -1) {
-			newMailDependencies.push(id);
+			emailDependencies.push(id);
 		} else {
-			newMailDependencies.splice(currentIndex, 1);
+			emailDependencies.splice(currentIndex, 1);
 		}
 
 		this.setState(
 			{
-				dependencies: { emailID: activeMail._id, emailDependencies: newMailDependencies }
+				dependencies: [
+					...this.state.dependencies,
+					{ emailID: activeMail._id, emailDependencies: emailDependencies }
+				]
 			},
-			() => console.log('after sst: ', this.state.dependencies)
+			this.updateStory
 		);
+	};
+
+	checkIfDependencyOfSelectedMail = (id) => {
+		let idDependencies = this.state.dependencies.reduce((deps, currentElement) => {
+			if (id === currentElement.emailID) {
+				deps = currentElement.emailDependencies;
+				return deps;
+			}
+		}, []);
+		
+
+		// TODO CHECK THIS FUNCTION
+	};
+
+	renderCheckboxes = (storyMails) => {
+		const { activeMail } = this.props;
+		if (storyMails.length > 0) {
+			return storyMails.map((mail, key) => {
+				if (mail && mail._id !== activeMail._id) {
+					return (
+						<ListItem
+							key={key}
+							role={undefined}
+							dense
+							button
+							onClick={() => this.toggleDependencyCheckbox(mail._id)}
+						>
+							<Checkbox
+								checked={this.checkIfDependencyOfSelectedMail(mail._id)}
+								tabIndex={-1}
+								disableRipple
+							/>
+							<ListItemText primary={mail.status}>{mail.title}</ListItemText>
+						</ListItem>
+					);
+				}
+			});
+		}
 	};
 
 	renderActiveMailDetails = () => {
@@ -273,16 +309,6 @@ class StoryObject extends Component {
 		if (activeMail.title) {
 			return (
 				<Paper className={classes.activeMailDetails}>
-					{dependencies.length > 0 &&
-						dependencies.map((dependencyObject) => {
-							if (dependencyObject.emailID === activeMail._id) {
-								return (
-									<Typography variant="display1">
-										{dependencyObject.emailDependencies.length}
-									</Typography>
-								);
-							}
-						})}
 					<Typography gutterBottom variant="headline" color="inherit" noWrap align="left">
 						Details:
 					</Typography>
@@ -292,32 +318,8 @@ class StoryObject extends Component {
 					<Typography gutterBottom variant="subheading" style={{ marginBottom: '2rem' }}>
 						{activeMail.text}
 					</Typography>
-					<Typography variant="headline">
-						Dependencies:
-					</Typography>
-					<List style={{ width: '100%' }}>
-						{// eslint-disable-next-line
-						storyMails.map((mail, key) => {
-							if (mail && mail._id !== activeMail._id) {
-								return (
-									<ListItem
-										key={key}
-										role={undefined}
-										dense
-										button
-										onClick={() => this.toggleDependencyCheckbox(mail._id)}
-									>
-										<Checkbox
-											checked={dependencies.emailDependencies.indexOf(mail._id) !== -1}
-											tabIndex={-1}
-											disableRipple
-										/>
-										<ListItemText primary={mail.status}>{mail.title}</ListItemText>
-									</ListItem>
-								);
-							}
-						})}
-					</List>
+					<Typography variant="headline">Dependencies:</Typography>
+					<List style={{ width: '100%' }}>{this.renderCheckboxes(storyMails)}</List>
 					<Typography gutterBottom variant="body2">
 						Time to finish: {activeMail.timer}
 					</Typography>
@@ -377,35 +379,16 @@ class StoryObject extends Component {
 		this.props.SetActiveStory({});
 	};
 
-	// findActiveStoryAndUpdateValues = (array, compareObject) => {
-	// 	const { title, text, author, emails } = this.state;
-	// 	const newStoryObject = {
-	// 		id: compareObject.id,
-	// 		title,
-	// 		author,
-	// 		text,
-	// 		emails
-	// 	};
-
-	// 	return array.map((element) => {
-	// 		if (element.id === compareObject.id) {
-	// 			return { ...newStoryObject };
-	// 		}
-	// 		return element;
-	// 	});
-	// };
-
 	updateStory = (reset) => {
 		const { UpdateStory, activeMail } = this.props;
-		let { title, text, author, emails } = this.state;
-
+		let { title, text, author, emails, dependencies } = this.state;
 		let storyValues = {
 			id: this.props.activeStory._id,
 			title,
 			text,
 			author,
 			emails,
-			dependencies: [ { emailID: activeMail._id, emailDependencies: [ 12345, 67890 ] } ]
+			dependencies
 		};
 
 		UpdateStory(storyValues);
@@ -531,7 +514,7 @@ class StoryObject extends Component {
 	};
 
 	render() {
-		const { classes } = this.props;
+		const { classes, activeStory } = this.props;
 		return (
 			<MuiShowcase
 				subheader="My Stories"

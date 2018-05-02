@@ -13,7 +13,7 @@ const StorySchema = new Schema({
 	author: String,
 	text: String,
 	emails: [ { type: Schema.Types.ObjectId, ref: 'email' } ],
-	dependencies: { emailID: Number, emailDependencies: [ Number ] },
+	dependencies: [ { emailID: { type: String, unique: true }, emailDependencies: [ String ] } ],
 	_user: { type: Schema.Types.ObjectId, ref: 'User' }
 });
 
