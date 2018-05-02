@@ -1,3 +1,4 @@
+// Imports
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -8,6 +9,7 @@ const app = express();
 const router = require('./router');
 const keys = require('./config/keys');
 
+// Database Setup
 mongoose.connect(keys.dbUrl);
 mongoose.Promise = global.Promise;
 
@@ -32,7 +34,11 @@ app.use(bodyParser.json({ type: '*/*' }));
 app.use(passport.initialize());
 app.use(passport.session());
 
+// Connect routing logic
 router(app);
+
+// Production environment
+// sending bundled app to user
 if (process.env.NODE_ENV === 'production') {
 	app.use(express.static('client/build'));
 
