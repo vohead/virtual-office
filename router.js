@@ -1,11 +1,14 @@
+// Imports
 const AuthenticationController = require('./controllers/authentication');
 const StoryController = require('./controllers/story');
 const EmailController = require('./controllers/email');
 const passportService = require('./passport');
 const passport = require('passport');
 
+// authenticates request
 const requireSignin = passport.authenticate('local', { session: true });
 
+// routing logic
 module.exports = (app) => {
 
 	app.post('/api/signup', AuthenticationController.signup);
