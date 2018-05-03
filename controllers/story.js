@@ -1,13 +1,14 @@
 const Story = require('../models/story');
 
 exports.save = (req, res, next) => {
+	console.log(req.body);
 	const title = req.body.title;
 	const text = req.body.text;
 	const author = req.body.author;
 	const emails = req.body.emails;
 	const dependencies = req.body.dependencies;
 	const user = req.user.id;
-	
+
 	if (!req.user) {
 		return res.status(401).send({ error: 'Access Denied' });
 	}

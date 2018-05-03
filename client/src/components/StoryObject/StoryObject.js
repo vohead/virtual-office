@@ -84,7 +84,7 @@ class StoryObject extends Component {
 			title: '',
 			author: '',
 			emails: [],
-			dependencies: [ { emailID: 0, emailDependencies: [] } ],
+			dependencies: [ { email: '', emailDependencies: [] } ],
 			activeMenuItem: null,
 			checked: false
 		};
@@ -235,51 +235,33 @@ class StoryObject extends Component {
 
 	toggleDependencyCheckbox = (id) => {
 		const { activeMail } = this.props;
-		let emailDependencies;
+		const { dependencies } = this.state;
 
-		if (this.state.dependencies.length > 0) {
-			// eslint-disable-next-line
-			emailDependencies = this.state.dependencies.map((dep) => {
-				if (activeMail._id === dep.emailID) {
-					 return [ ...dep.emailDependencies ];
-				} 
-			});
-		} else {
-			emailDependencies = [];
-		}
+		let emailDependencies = [ ...dependencies ];
+		let freshDeps = [];
 
-		console.log(emailDependencies);
-		if (emailDependencies.indexOf(id) !== -1) {
-			emailDependencies.splice(emailDependencies.indexOf(id), 1);
-		} else {
-			emailDependencies.push(id);
-		}
-
-		const newDeps = [];
-		if (this.state.dependencies.length > 0) {
-			// eslint-disable-next-line
-			this.state.dependencies.map((dep) => {
-				if (dep.emailID === this.props.activeMail._id) {
-					newDeps.push({ emailID: this.props.activeMail._id, emailDependencies: emailDependencies });
-				} else {
-					newDeps.push(dep);
+		if (emailDependencies.length > 0) {
+			emailDependencies.map((dependency) => {
+				if (dependency.email === activeMail._id) {
+					freshDeps.push(dependency.emailDependencies.push(id));
 				}
 			});
-			this.setState({
-				dependencies: newDeps
-			});
 		} else {
-			this.setState({
-				dependencies: [ { emailID: this.props.activeMail._id, emailDependencies: emailDependencies } ]
-			});
+			freshDeps.push({ email: activeMail._id, emailDependencies: [ id ] });
 		}
+
+		console.log(freshDeps);
+
+		this.setState({ dependencies: freshDeps });
+
+		console.log(this.state);
 	};
 
 	checkIfDependencyOfSelectedMail = (activeId, toCompareId) => {
 		let result = false;
 		// eslint-disable-next-line
 		let idDependencies = this.state.dependencies.reduce((deps, currentElement) => {
-			if (activeId === currentElement.emailID) {
+			if (activeId === currentElement.email) {
 				deps = currentElement.emailDependencies;
 				return deps;
 			}
