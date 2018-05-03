@@ -85,7 +85,7 @@ class StoryObject extends Component {
 			title: '',
 			author: '',
 			emails: [],
-			dependencies: [ { emailID: 0, emailDependencies: [] } ],
+			dependencies: [{ emailID: 0, emailDependencies: [] }],
 			activeMenuItem: null,
 			checked: false
 		};
@@ -143,7 +143,8 @@ class StoryObject extends Component {
 		const { activeMail } = this.props;
 		this.setState(
 			{
-				emails: [ ...this.state.emails, activeMail._id ]
+				emails: [...this.state.emails, activeMail._id]
+				// dependencies: [...this.state.dependencies, { emailID: activeMail._id, emailDependencies: [] }]
 			},
 			this.updateStory
 		);
@@ -174,7 +175,7 @@ class StoryObject extends Component {
 	};
 
 	removeFromStateAndUpdateStory = (mail) => {
-		const emails = [ ...this.state.emails ];
+		const emails = [...this.state.emails];
 		let emailsWithoutMail = [];
 		// eslint-disable-next-line
 		emails.map((email) => {
@@ -236,34 +237,92 @@ class StoryObject extends Component {
 
 	toggleDependencyCheckbox = (id) => {
 		const { activeMail } = this.props;
-		const emailDependencies = this.checkIfDependencyOfSelectedMail(id) || [];
-		const currentIndex = emailDependencies.indexOf(id);
 
-		if (currentIndex === -1) {
+
+		const emailDependencies = this.state.dependencies.map(dep => {
+			// this.props.activeMail._id
+			if ( 12345 === dep.emailID) {
+				return dep.emailDependencies;
+			}
+			return [];
+		});
+		console.log(emailDependencies)
+
+		if (emailDependencies.indexOf(id) === -1) {
 			emailDependencies.push(id);
 		} else {
-			emailDependencies.splice(currentIndex, 1);
+			emailDependencies.splice(emailDependencies.indexOf(id), 1);
 		}
 
-		this.setState(
-			{
-				dependencies: [
-					...this.state.dependencies,
-					{ emailID: activeMail._id, emailDependencies: emailDependencies }
-				]
-			},
-			this.updateStory
-		);
+
+		// const newDeps = [];
+		// this.state.dependencies.map(dep => {
+		// 	if (dep.emailID === this.props.activeMail._id) {
+		// 		newDeps.push({ emailID: this.props.activeMail._id, dependencies: emailDependencies })
+		// 	} else {
+		// 		newDeps.push(dep)
+		// 	}
+		// 	if (!dep) {
+		// 		newDeps.push({ emailID: this.props.activeMail._id, dependencies: emailDependencies })
+		// 	}
+		// })
+
+		this.setState({ dependencies: [...this.state.dependencies, {emailID: 1223, emailDependencies}] })
+
+		console.log(this.state.dependencies)
+
+		// const currentIndex = emailDependencies.indexOf(id);
+
+
+		// if (currentIndex === -1) {
+		// 	emailDependencies.push(id);
+		// } else {
+		// 	emailDependencies.splice(currentIndex, 1);
+		// }
+
+		// let newDependencies = [...this.state.dependencies];
+		// console.log("state copy", newDependencies)
+
+		// let dependencyUpdate = newDependencies.map((dependencyObject) => {
+		// 	if (dependencyObject.emailID === activeMail._id) {
+		// 		dependencyObject.emailDependencies = emailDependencies;
+		// 	} else {
+		// 		alert("bla")
+		// 	}
+		// 	return newDependencies;
+		// })
+
+		// console.log("newDeps:", dependencyUpdate);
+
+
+
+		// this.setState(
+		// 	{
+		// 		dependencies: newDependencies
+		// 	},
+		// 	this.updateStory
+		// );
 	};
 
-	checkIfDependencyOfSelectedMail = (id) => {
+	checkIfDependencyOfSelectedMail = (activeId, toCompareId) => {
+
+		let result = false;
+
 		let idDependencies = this.state.dependencies.reduce((deps, currentElement) => {
-			if (id === currentElement.emailID) {
+			if (activeId === currentElement.emailID) {
 				deps = currentElement.emailDependencies;
 				return deps;
 			}
 		}, []);
-		
+
+
+		if (idDependencies) {
+			if (idDependencies.indexOf(toCompareId) !== -1) {
+				result = true;
+			}
+		}
+		return result;
+
 
 		// TODO CHECK THIS FUNCTION
 	};
@@ -282,7 +341,7 @@ class StoryObject extends Component {
 							onClick={() => this.toggleDependencyCheckbox(mail._id)}
 						>
 							<Checkbox
-								checked={this.checkIfDependencyOfSelectedMail(mail._id)}
+								checked={this.checkIfDependencyOfSelectedMail(activeMail._id, mail._id)}
 								tabIndex={-1}
 								disableRipple
 							/>
