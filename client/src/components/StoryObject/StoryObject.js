@@ -79,13 +79,12 @@ class StoryObject extends Component {
 		super(props);
 
 		this.state = {
-			id: 1,
 			right: false,
 			text: '',
 			title: '',
 			author: '',
 			emails: [],
-			dependencies: [{ emailID: 0, emailDependencies: [] }],
+			dependencies: [ { emailID: 0, emailDependencies: [] } ],
 			activeMenuItem: null,
 			checked: false
 		};
@@ -143,8 +142,7 @@ class StoryObject extends Component {
 		const { activeMail } = this.props;
 		this.setState(
 			{
-				emails: [...this.state.emails, activeMail._id]
-				// dependencies: [...this.state.dependencies, { emailID: activeMail._id, emailDependencies: [] }]
+				emails: [ ...this.state.emails, activeMail._id ]
 			},
 			this.updateStory
 		);
@@ -175,7 +173,7 @@ class StoryObject extends Component {
 	};
 
 	removeFromStateAndUpdateStory = (mail) => {
-		const emails = [...this.state.emails];
+		const emails = [ ...this.state.emails ];
 		let emailsWithoutMail = [];
 		// eslint-disable-next-line
 		emails.map((email) => {
@@ -237,84 +235,55 @@ class StoryObject extends Component {
 
 	toggleDependencyCheckbox = (id) => {
 		const { activeMail } = this.props;
+		let emailDependencies;
 
-
-		const emailDependencies = this.state.dependencies.map(dep => {
-			// this.props.activeMail._id
-			if ( 12345 === dep.emailID) {
-				return dep.emailDependencies;
-			}
-			return [];
-		});
-		console.log(emailDependencies)
-
-		if (emailDependencies.indexOf(id) === -1) {
-			emailDependencies.push(id);
+		if (this.state.dependencies.length > 0) {
+			// eslint-disable-next-line
+			emailDependencies = this.state.dependencies.map((dep) => {
+				if (activeMail._id === dep.emailID) {
+					 return [ ...dep.emailDependencies ];
+				} 
+			});
 		} else {
-			emailDependencies.splice(emailDependencies.indexOf(id), 1);
+			emailDependencies = [];
 		}
 
+		console.log(emailDependencies);
+		if (emailDependencies.indexOf(id) !== -1) {
+			emailDependencies.splice(emailDependencies.indexOf(id), 1);
+		} else {
+			emailDependencies.push(id);
+		}
 
-		// const newDeps = [];
-		// this.state.dependencies.map(dep => {
-		// 	if (dep.emailID === this.props.activeMail._id) {
-		// 		newDeps.push({ emailID: this.props.activeMail._id, dependencies: emailDependencies })
-		// 	} else {
-		// 		newDeps.push(dep)
-		// 	}
-		// 	if (!dep) {
-		// 		newDeps.push({ emailID: this.props.activeMail._id, dependencies: emailDependencies })
-		// 	}
-		// })
-
-		this.setState({ dependencies: [...this.state.dependencies, {emailID: 1223, emailDependencies}] })
-
-		console.log(this.state.dependencies)
-
-		// const currentIndex = emailDependencies.indexOf(id);
-
-
-		// if (currentIndex === -1) {
-		// 	emailDependencies.push(id);
-		// } else {
-		// 	emailDependencies.splice(currentIndex, 1);
-		// }
-
-		// let newDependencies = [...this.state.dependencies];
-		// console.log("state copy", newDependencies)
-
-		// let dependencyUpdate = newDependencies.map((dependencyObject) => {
-		// 	if (dependencyObject.emailID === activeMail._id) {
-		// 		dependencyObject.emailDependencies = emailDependencies;
-		// 	} else {
-		// 		alert("bla")
-		// 	}
-		// 	return newDependencies;
-		// })
-
-		// console.log("newDeps:", dependencyUpdate);
-
-
-
-		// this.setState(
-		// 	{
-		// 		dependencies: newDependencies
-		// 	},
-		// 	this.updateStory
-		// );
+		const newDeps = [];
+		if (this.state.dependencies.length > 0) {
+			// eslint-disable-next-line
+			this.state.dependencies.map((dep) => {
+				if (dep.emailID === this.props.activeMail._id) {
+					newDeps.push({ emailID: this.props.activeMail._id, emailDependencies: emailDependencies });
+				} else {
+					newDeps.push(dep);
+				}
+			});
+			this.setState({
+				dependencies: newDeps
+			});
+		} else {
+			this.setState({
+				dependencies: [ { emailID: this.props.activeMail._id, emailDependencies: emailDependencies } ]
+			});
+		}
 	};
 
 	checkIfDependencyOfSelectedMail = (activeId, toCompareId) => {
-
 		let result = false;
-
+		// eslint-disable-next-line
 		let idDependencies = this.state.dependencies.reduce((deps, currentElement) => {
 			if (activeId === currentElement.emailID) {
 				deps = currentElement.emailDependencies;
 				return deps;
 			}
 		}, []);
-
 
 		if (idDependencies) {
 			if (idDependencies.indexOf(toCompareId) !== -1) {
@@ -323,13 +292,13 @@ class StoryObject extends Component {
 		}
 		return result;
 
-
 		// TODO CHECK THIS FUNCTION
 	};
 
 	renderCheckboxes = (storyMails) => {
 		const { activeMail } = this.props;
 		if (storyMails.length > 0) {
+			// eslint-disable-next-line
 			return storyMails.map((mail, key) => {
 				if (mail && mail._id !== activeMail._id) {
 					return (
@@ -355,7 +324,7 @@ class StoryObject extends Component {
 
 	renderActiveMailDetails = () => {
 		const { activeMail, classes, emailObjects } = this.props;
-		const { emails, dependencies } = this.state;
+		const { emails } = this.state;
 		let storyMails = [];
 
 		// eslint-disable-next-line
@@ -439,7 +408,7 @@ class StoryObject extends Component {
 	};
 
 	updateStory = (reset) => {
-		const { UpdateStory, activeMail } = this.props;
+		const { UpdateStory } = this.props;
 		let { title, text, author, emails, dependencies } = this.state;
 		let storyValues = {
 			id: this.props.activeStory._id,
@@ -573,7 +542,7 @@ class StoryObject extends Component {
 	};
 
 	render() {
-		const { classes, activeStory } = this.props;
+		const { classes } = this.props;
 		return (
 			<MuiShowcase
 				subheader="My Stories"
