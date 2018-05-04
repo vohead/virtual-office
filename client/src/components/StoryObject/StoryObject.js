@@ -84,7 +84,7 @@ class StoryObject extends Component {
 			title: '',
 			author: '',
 			emails: [],
-			dependencies: [ { email: '', emailDependencies: [] } ],
+			dependencies: [{ email: '', emailDependencies: [] }],
 			activeMenuItem: null,
 			checked: false
 		};
@@ -102,6 +102,7 @@ class StoryObject extends Component {
 
 	activateStory = (story) => {
 		this.props.SetActiveStory(story);
+		console.log(story.dependencies)
 		this.setState({
 			title: story.title,
 			author: story.author,
@@ -140,12 +141,15 @@ class StoryObject extends Component {
 
 	addEmailToComponentState = () => {
 		const { activeMail } = this.props;
-		this.setState(
-			{
-				emails: [ ...this.state.emails, activeMail._id ]
-			},
-			this.updateStory
-		);
+
+		if (this.state.emails.indexOf(activeMail._id) === -1) {
+			this.setState(
+				{
+					emails: [...this.state.emails, activeMail._id]
+				},
+				this.updateStory
+			);
+		}
 	};
 
 	renderAvailableMails = () => {
@@ -169,11 +173,12 @@ class StoryObject extends Component {
 
 	showMailDetails = (mail) => {
 		this.props.SetActiveMail(mail);
+		console.log(this.state)
 		this.setState({ right: true });
 	};
 
 	removeFromStateAndUpdateStory = (mail) => {
-		const emails = [ ...this.state.emails ];
+		const emails = [...this.state.emails];
 		let emailsWithoutMail = [];
 		// eslint-disable-next-line
 		emails.map((email) => {
@@ -237,35 +242,57 @@ class StoryObject extends Component {
 		const { activeMail } = this.props;
 		const { dependencies } = this.state;
 
-		let emailDependencies = [ ...dependencies ];
 		let freshDeps = [];
+		let freshEmailDeps = [];
 
-		if (emailDependencies.length > 0) {
-			emailDependencies.map((dependency) => {
+		if (dependencies.length > 0) {
+			dependencies.map((dependency) => {
 				if (dependency.email === activeMail._id) {
-					freshDeps.push(dependency.emailDependencies.push(id));
+					freshEmailDeps = [...dependency.emailDependencies];
+				} else {
+					freshDeps.push(dependency);
 				}
 			});
+			if (freshEmailDeps.indexOf(id) === -1) {
+
+				freshEmailDeps.push(id);
+			} else {
+				freshEmailDeps.splice(freshEmailDeps.indexOf(id), 1)
+			}
+			freshDeps.push({ email: activeMail._id, emailDependencies: freshEmailDeps });
+
 		} else {
-			freshDeps.push({ email: activeMail._id, emailDependencies: [ id ] });
+			freshDeps.push({ email: activeMail._id, emailDependencies: [id] });
 		}
 
-		console.log(freshDeps);
+		console.log("WIr sind Fresh", freshDeps);
+		if (this.state.emails.indexOf(activeMail._id) !== -1) {
+			this.setState({ dependencies: freshDeps }, () => console.log(this.state.dependencies));
+		}
 
-		this.setState({ dependencies: freshDeps });
 
-		console.log(this.state);
 	};
 
 	checkIfDependencyOfSelectedMail = (activeId, toCompareId) => {
+		const { dependencies } = this.state;
 		let result = false;
 		// eslint-disable-next-line
-		let idDependencies = this.state.dependencies.reduce((deps, currentElement) => {
-			if (activeId === currentElement.email) {
-				deps = currentElement.emailDependencies;
-				return deps;
+		let idDependencies = [];
+
+		dependencies.map((dependency) => {
+			if (dependency.email === activeId) {
+				idDependencies = [...dependency.emailDependencies];
 			}
-		}, []);
+		});
+
+		// let idDependencies = this.state.dependencies.reduce((deps, currentElement) => {
+		// 	if (activeId === currentElement.email) {
+		// 		deps = currentElement.emailDependencies;
+		// 		return deps;
+		// 	}
+		// }, []);
+
+		console.log("iddeps", idDependencies)
 
 		if (idDependencies) {
 			if (idDependencies.indexOf(toCompareId) !== -1) {
@@ -336,9 +363,10 @@ class StoryObject extends Component {
 					<Typography gutterBottom variant="body2">
 						Written by {activeMail.author}
 					</Typography>
-					<Button variant="raised" onClick={this.addEmailToComponentState}>
-						Add to story
-					</Button>
+					{(this.state.emails.indexOf(activeMail._id) === -1) &&
+						<Button variant="raised" onClick={this.addEmailToComponentState}>
+							Add to story
+					</Button>}
 				</Paper>
 			);
 		}
