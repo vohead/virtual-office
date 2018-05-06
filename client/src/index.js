@@ -13,6 +13,7 @@ import './styles.css';
 
 import reducers from './reducers';
 import StoryPage from './StoryPage';
+import StoryTest from './StoryTest';
 import MailPage from './MailPage';
 import WelcomePage from './WelcomePage';
 import MuiShowcase from './MuiShowcase';
@@ -35,6 +36,7 @@ ReactDOM.render(
 		<MuiThemeProvider theme={theme}>
 			<Router>
 				<Switch>
+					<Route path="/storytest/:id" component={StoryTest} />
 					<Route path="/story" component={requireAuth(StoryPage)} />
 					<Route path="/mui" component={MuiShowcase} />
 					<Route path="/mails" component={requireAuth(MailPage)} />

@@ -1,7 +1,6 @@
 const Story = require('../models/story');
 
 exports.save = (req, res, next) => {
-	console.log(req.body);
 	const title = req.body.title;
 	const text = req.body.text;
 	const author = req.body.author;
@@ -47,6 +46,12 @@ exports.findStoriesFromUser = (req, res, next) => {
 
 	Story.find({ _user: req.user.id }).then((stories) => {
 		res.send(stories);
+	});
+};
+
+exports.findSingleStory = (req, res, next) => {
+	Story.find({ _id: req.params.id }).then((story) => {
+		res.send(story);
 	});
 };
 

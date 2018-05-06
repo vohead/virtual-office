@@ -5,6 +5,7 @@ export const DELETESTORYOBJECT = 'delete_story_object';
 export const LOGIN = 'login';
 export const LOGOUT = 'logout';
 export const FETCHSTORIES = 'fetch_stories';
+export const FETCHSTORY = 'fetch_story';
 export const SAVESTORY = 'save_story';
 export const UPDATESTORY = 'update_story';
 export const DELETESTORY = 'delete_story';
@@ -54,6 +55,14 @@ export const FetchStories = () => async (dispatch) => {
 	const res = await axios.get('/api/stories');
 	dispatch({
 		type: FETCHSTORIES,
+		payload: res.data
+	});
+};
+
+export const FetchStory = (storyID) => async (dispatch) => {
+	const res = await axios.get(`/api/story/${storyID}`);
+	dispatch({
+		type: FETCHSTORY,
 		payload: res.data
 	});
 };

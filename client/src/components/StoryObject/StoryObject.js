@@ -84,9 +84,10 @@ class StoryObject extends Component {
 			title: '',
 			author: '',
 			emails: [],
-			dependencies: [{ email: '', emailDependencies: [] }],
+			dependencies: [ { email: '', emailDependencies: [] } ],
 			activeMenuItem: null,
-			checked: false
+			checked: false,
+			temporaryDependencyIds: []
 		};
 	}
 
@@ -102,14 +103,21 @@ class StoryObject extends Component {
 
 	activateStory = (story) => {
 		this.props.SetActiveStory(story);
-		console.log(story.dependencies)
+
+		let relevantDependencies = [];
+		story.dependencies.map((dep) => {
+			if (story.emails.indexOf(dep.email) !== -1) {
+				relevantDependencies.push(dep);
+			}
+		});
+
 		this.setState({
 			title: story.title,
 			author: story.author,
 			text: story.text,
 			emails: story.emails,
 			activeMenuItem: story.id,
-			dependencies: story.dependencies
+			dependencies: relevantDependencies
 		});
 	};
 
@@ -145,11 +153,20 @@ class StoryObject extends Component {
 		if (this.state.emails.indexOf(activeMail._id) === -1) {
 			this.setState(
 				{
-					emails: [...this.state.emails, activeMail._id]
+					emails: [ ...this.state.emails, activeMail._id ],
+					dependencies: [
+						...this.state.dependencies,
+						{ email: activeMail._id, emailDependencies: this.state.temporaryDependencyIds }
+					]
 				},
-				this.updateStory
+				() => this.updateStory(false, true)
 			);
 		}
+	};
+
+	setActiveAndResetTemporaryDeps = (email) => {
+		this.props.SetActiveMail(email);
+		this.setState({ temporaryDependencyIds: [] });
 	};
 
 	renderAvailableMails = () => {
@@ -161,7 +178,7 @@ class StoryObject extends Component {
 						className={classes.menuItem}
 						selected={this.state.activeMenuItem === email.id}
 						key={key}
-						onClick={() => this.props.SetActiveMail(email)}
+						onClick={() => this.setActiveAndResetTemporaryDeps(email)}
 					>
 						<ListItemText primary={email.title} />
 					</MenuItem>
@@ -173,20 +190,31 @@ class StoryObject extends Component {
 
 	showMailDetails = (mail) => {
 		this.props.SetActiveMail(mail);
-		console.log(this.state)
 		this.setState({ right: true });
 	};
 
 	removeFromStateAndUpdateStory = (mail) => {
-		const emails = [...this.state.emails];
+		const emails = [ ...this.state.emails ];
+		const dependencies = [ ...this.state.dependencies ];
 		let emailsWithoutMail = [];
+		let dependenciesWithoutMail = [];
 		// eslint-disable-next-line
 		emails.map((email) => {
 			if (email !== mail._id) {
 				emailsWithoutMail.push(email);
 			}
 		});
-		this.setState({ emails: emailsWithoutMail }, this.updateStory);
+
+		dependencies.map((dep) => {
+			if (dep.email !== mail._id) {
+				dependenciesWithoutMail.push(dep);
+			}
+		});
+
+		if (dependenciesWithoutMail.length < 2) {
+			dependenciesWithoutMail = [];
+		}
+		this.setState({ emails: emailsWithoutMail, dependencies: dependenciesWithoutMail }, this.updateStory);
 	};
 
 	renderStoryMails = () => {
@@ -240,7 +268,17 @@ class StoryObject extends Component {
 
 	toggleDependencyCheckbox = (id) => {
 		const { activeMail } = this.props;
-		const { dependencies } = this.state;
+		const { dependencies, temporaryDependencyIds } = this.state;
+
+		let temporaryDependencyIdTracker = [ ...temporaryDependencyIds ];
+
+		if (temporaryDependencyIdTracker.indexOf(id) !== -1) {
+			temporaryDependencyIdTracker.splice(temporaryDependencyIdTracker.indexOf(id), 1);
+		} else {
+			temporaryDependencyIdTracker.push(id);
+		}
+
+		this.setState({ temporaryDependencyIds: temporaryDependencyIdTracker });
 
 		let freshDeps = [];
 		let freshEmailDeps = [];
@@ -248,55 +286,49 @@ class StoryObject extends Component {
 		if (dependencies.length > 0) {
 			dependencies.map((dependency) => {
 				if (dependency.email === activeMail._id) {
-					freshEmailDeps = [...dependency.emailDependencies];
+					freshEmailDeps = [ ...dependency.emailDependencies ];
 				} else {
 					freshDeps.push(dependency);
 				}
 			});
 			if (freshEmailDeps.indexOf(id) === -1) {
-
 				freshEmailDeps.push(id);
 			} else {
-				freshEmailDeps.splice(freshEmailDeps.indexOf(id), 1)
+				freshEmailDeps.splice(freshEmailDeps.indexOf(id), 1);
 			}
-			freshDeps.push({ email: activeMail._id, emailDependencies: freshEmailDeps });
-
+			if (this.state.emails.indexOf(activeMail._id) !== -1) {
+				freshDeps.push({ email: activeMail._id, emailDependencies: freshEmailDeps });
+			}
 		} else {
-			freshDeps.push({ email: activeMail._id, emailDependencies: [id] });
+			freshDeps.push({ email: activeMail._id, emailDependencies: [ id ] });
 		}
 
-		console.log("WIr sind Fresh", freshDeps);
-		if (this.state.emails.indexOf(activeMail._id) !== -1) {
-			this.setState({ dependencies: freshDeps }, () => console.log(this.state.dependencies));
-		}
-
-
+		this.setState({ dependencies: freshDeps });
 	};
 
 	checkIfDependencyOfSelectedMail = (activeId, toCompareId) => {
 		const { dependencies } = this.state;
 		let result = false;
-		// eslint-disable-next-line
 		let idDependencies = [];
 
 		dependencies.map((dependency) => {
 			if (dependency.email === activeId) {
-				idDependencies = [...dependency.emailDependencies];
+				idDependencies = [ ...dependency.emailDependencies ];
 			}
 		});
 
-		// let idDependencies = this.state.dependencies.reduce((deps, currentElement) => {
-		// 	if (activeId === currentElement.email) {
-		// 		deps = currentElement.emailDependencies;
-		// 		return deps;
-		// 	}
-		// }, []);
-
-		console.log("iddeps", idDependencies)
-
-		if (idDependencies) {
+		if (idDependencies.length > 0) {
 			if (idDependencies.indexOf(toCompareId) !== -1) {
+				console.log('what up yo');
 				result = true;
+			}
+		} else {
+			if (this.state.emails.indexOf(activeId) === -1) {
+				console.log('there');
+				if (this.state.temporaryDependencyIds.indexOf(toCompareId) !== -1) {
+					console.log('friend');
+					result = true;
+				}
 			}
 		}
 		return result;
@@ -363,10 +395,15 @@ class StoryObject extends Component {
 					<Typography gutterBottom variant="body2">
 						Written by {activeMail.author}
 					</Typography>
-					{(this.state.emails.indexOf(activeMail._id) === -1) &&
+					{this.state.emails.indexOf(activeMail._id) === -1 ? (
 						<Button variant="raised" onClick={this.addEmailToComponentState}>
 							Add to story
-					</Button>}
+						</Button>
+					) : (
+						<Button variant="raised" onClick={() => this.updateStory(false, false)}>
+							Update
+						</Button>
+					)}
 				</Paper>
 			);
 		}
@@ -417,9 +454,9 @@ class StoryObject extends Component {
 		this.props.SetActiveStory({});
 	};
 
-	updateStory = (reset) => {
-		const { UpdateStory } = this.props;
-		let { title, text, author, emails, dependencies } = this.state;
+	updateStory = (reset, pullTemporaryDependencies) => {
+		const { UpdateStory, activeMail } = this.props;
+		let { title, text, author, emails, dependencies, temporaryDependencyIds } = this.state;
 		let storyValues = {
 			id: this.props.activeStory._id,
 			title,
@@ -428,6 +465,12 @@ class StoryObject extends Component {
 			emails,
 			dependencies
 		};
+
+		if (pullTemporaryDependencies) {
+			let updatedDependencies = [ ...this.state.dependencies ];
+			updatedDependencies.push({ email: activeMail._id, emailDependencies: temporaryDependencyIds });
+			storyValues.dependencies = updatedDependencies;
+		}
 
 		UpdateStory(storyValues);
 		if (reset) {
@@ -572,8 +615,6 @@ class StoryObject extends Component {
 						direction="column"
 						wrap="nowrap"
 						justify="space-between"
-						spacing={40}
-						alignContent="stretch"
 					>
 						<Grid item sm={12}>
 							<div tabIndex={0} role="button" className={classes.list}>

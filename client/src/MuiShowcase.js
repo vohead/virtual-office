@@ -80,7 +80,7 @@ function MuiShowcase(props) {
 						</Grid>
 						<Grid item sm={3}>
 							<Grid container justify="space-between">
-								<Typography variant="title">Welcome User</Typography>
+								<Typography variant="title">Welcome {props.auth.username}</Typography>
 								<Button variant="raised" onClick={props.Logout}>
 									Logout
 								</Button>
@@ -128,4 +128,8 @@ MuiShowcase.propTypes = {
 	classes: PropTypes.object.isRequired
 };
 
-export default connect(null, actions)(withStyles(styles)(MuiShowcase));
+const mapStateToProps = ({auth}) => ({
+	auth
+})
+
+export default connect(mapStateToProps, actions)(withStyles(styles)(MuiShowcase));

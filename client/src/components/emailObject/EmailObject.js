@@ -101,7 +101,9 @@ class EmailObject extends Component {
 
 		this.props.SaveMail(emailObject);
 		this.setState({ checked: true });
-		setTimeout(() => {this.setState({ checked: false })}, 2000);
+		setTimeout(() => {
+			this.setState({ checked: false });
+		}, 2000);
 	};
 
 	activateMail = (email) => {
@@ -143,11 +145,11 @@ class EmailObject extends Component {
 			title: '',
 			author: '',
 			text: '',
-			showAdd: true
+			showAdd: true,
+			timer: 0
 		});
 
 		this.props.SetActiveMail({});
-
 	};
 
 	render() {

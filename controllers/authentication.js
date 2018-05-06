@@ -28,7 +28,7 @@ exports.signup = (req, res, next) => {
 };
 
 exports.signin = (req, res, next) => {
-	res.send(true);
+	res.send({ status: true, username: req.body.username });
 };
 
 exports.signout = (req, res, next) => {

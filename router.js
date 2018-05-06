@@ -17,6 +17,7 @@ module.exports = (app) => {
 
 	app.post('/api/story', StoryController.save);
 	app.put('/api/story', StoryController.update);
+	app.get('/api/story/:id', StoryController.findSingleStory);
 	app.get('/api/stories', StoryController.findStoriesFromUser);
 	app.delete('/api/story/:id', StoryController.delete);
 
