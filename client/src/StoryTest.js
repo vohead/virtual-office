@@ -37,7 +37,11 @@ class StoryTest extends Component {
 		const { emails } = this.props.activeStory;
 		if (emails) {
 			return emails.map((mail, index) => {
-				return <Paper>{index}</Paper>;
+				return (
+					<Grid item>
+						<Paper style={{ padding: '1rem' }}>{mail}</Paper>
+					</Grid>
+				);
 			});
 		}
 		return <p>Loading</p>;
@@ -46,7 +50,14 @@ class StoryTest extends Component {
 	render() {
 		return (
 			<Grid container>
-				{this.startStory()}
+				<Grid item sm={2}>
+					<Grid container direction="column" spacing={8}>
+						{this.startStory()}
+					</Grid>
+				</Grid>
+				<Grid item sm={10}>
+					Hi
+				</Grid>
 			</Grid>
 		)
 	}
