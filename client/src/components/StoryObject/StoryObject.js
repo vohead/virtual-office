@@ -102,6 +102,7 @@ class StoryObject extends Component {
 	};
 
 	activateStory = (story) => {
+		console.log(story)
 		this.props.SetActiveStory(story);
 
 		let relevantDependencies = [];
@@ -319,14 +320,11 @@ class StoryObject extends Component {
 
 		if (idDependencies.length > 0) {
 			if (idDependencies.indexOf(toCompareId) !== -1) {
-				console.log('what up yo');
 				result = true;
 			}
 		} else {
 			if (this.state.emails.indexOf(activeId) === -1) {
-				console.log('there');
 				if (this.state.temporaryDependencyIds.indexOf(toCompareId) !== -1) {
-					console.log('friend');
 					result = true;
 				}
 			}

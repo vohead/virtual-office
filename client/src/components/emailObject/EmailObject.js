@@ -104,6 +104,7 @@ class EmailObject extends Component {
 		setTimeout(() => {
 			this.setState({ checked: false });
 		}, 2000);
+		this.clearComponentStateAndForm();
 	};
 
 	activateMail = (email) => {
