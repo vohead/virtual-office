@@ -621,7 +621,7 @@ class StoryObject extends Component {
 								<MenuList
 									subheader={
 										<Fragment>
-											<ListSubheader>
+											<ListSubheader disableSticky={true}>
 												<Typography variant="headline" color="inherit" noWrap align="center">
 													Mails
 												</Typography>
