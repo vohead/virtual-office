@@ -432,7 +432,7 @@ class StoryObject extends Component {
 				dependencies: []
 			});
 		} else {
-			alert('set some values, bitch');
+			alert('empty values are not acceptable');
 		}
 
 		setTimeout(() => {
