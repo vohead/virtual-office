@@ -42,6 +42,12 @@ class WelcomePage extends Component {
 		this.props.Login(this.state.username, this.state.password);
 	};
 
+	onKeyPress = (e) => {
+		if(e.key === 'Enter') {
+			this.props.Login(this.state.username, this.state.password);
+		}
+	}
+
 	handleChange = (fieldName, e) => {
 		this.setState({
 			[fieldName]: e.target.value
@@ -74,6 +80,7 @@ class WelcomePage extends Component {
 							id="username"
 							value={this.state.username}
 							onChange={(e) => this.handleChange('username', e)}
+							onKeyPress={this.onKeyPress}
 							inputProps={{
 								'aria-label': 'username'
 							}}
@@ -88,6 +95,7 @@ class WelcomePage extends Component {
 							type={this.state.showPassword ? 'text' : 'password'}
 							value={this.state.password}
 							onChange={(e) => this.handleChange('password', e)}
+							onKeyPress={this.onKeyPress}
 							endAdornment={
 								<InputAdornment position="end">
 									<IconButton
